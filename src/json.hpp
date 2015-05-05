@@ -20,18 +20,11 @@ public:
 
   int result;
   // Handling the scanner.
-  void scan_begin ();
-  void scan_end ();
+  void scan_begin (std::string);
   bool trace_scanning;
   // Run the parser on file F.
   // Return 0 on success.
   int parse (const std::string& f);
-  // The name of the file being parsed.
-  // Used later to pass the file name to the location tracker.
-  std::string file;
-
-  // Rafel:
-  std::stringstream jsonStream;
 
   // Whether parser traces should be generated.
   bool trace_parsing;

@@ -55,17 +55,8 @@ blank [ \t]
 %%
 
 void
-calcxx_driver::scan_begin ()
+calcxx_driver::scan_begin (std::string s)
 {
-//  yyin = jsonStream;
-    yyin = stdin;
-}
-
-
-
-void
-calcxx_driver::scan_end ()
-{
-//  fclose (yyin);
+  yy_scan_string(s.c_str());
 }
 

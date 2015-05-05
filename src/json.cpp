@@ -13,14 +13,13 @@ calcxx_driver::~calcxx_driver ()
 }
 
 int
-calcxx_driver::parse (const std::string &f)
+calcxx_driver::parse (const std::string &s)
 {
-  file = f;
-  scan_begin ();
+//  file = f;
+  scan_begin (s);
   yy::calcxx_parser parser (*this);
   parser.set_debug_level (trace_parsing);
   int res = parser.parse ();
-  scan_end ();
   return res;
 }
 
