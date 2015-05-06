@@ -26,6 +26,8 @@ public:
 
   void testArray();
 
+  void testObject();
+
 
 };
 

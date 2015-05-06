@@ -5,11 +5,14 @@
 #include <vector>
 #include <ostream>
 
+#include "jsObject.hpp"
+
 #define T_UNDEFINED -1
 #define T_INT 0
 #define T_DOUBLE 1
 #define T_STRING 2
 #define T_ARRAY 3
+#define T_OBJECT 3
 
 
 class jsValue {
@@ -18,11 +21,13 @@ class jsValue {
 
   int type;
 
-  int *intVal;
+  int *intVal; // TODO: use int && intVal and std::move()
 
-  std::string stringVal;
+  std::string stringVal; // TODO: use string && stringVal and std::move()
 
   std::vector<jsValue> arrayVal;
+
+  jsObject objectVal;
 
   void init();
 

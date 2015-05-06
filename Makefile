@@ -12,7 +12,7 @@ all : src/parser test/testRunner
 test : test/testRunner
 
 test/testRunner : src/parser $(TESTOBJS)
-	$(CC) $(LFLAGS) -o test/testRunner src/jsValue.o $(TESTOBJS) -lmomoLogging
+	$(CC) $(LFLAGS) -o test/testRunner src/jsValue.o src/jsObject.o $(TESTOBJS) -lmomoLogging
 
 test/%.o: test/%.cpp test/%.hpp
 	$(CC) -c $(INCLUDES) $(CFLAGS) $<
@@ -41,6 +41,9 @@ src/scanner.cpp: src/scanner.l
 
 src/jsValue.o: src/jsValue.cpp src/jsValue.hpp
 	cd src; $(CC) $(CFLAGS) -c jsValue.cpp
+
+src/jsObject.o: src/jsObject.cpp src/jsObject.hpp
+	cd src; $(CC) $(CFLAGS) -c jsObject.cpp
 
 
 clean:

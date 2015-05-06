@@ -1,3 +1,4 @@
+#include "jsObject.hpp"
 #include "jsValue.hpp"
 
  std::ostream& operator<<(std::ostream& os, const jsValue& x) {

@@ -18,6 +18,8 @@ void TestJsValue::testAll(){
 
   testArray();
 
+  testObject();
+
 }
 
 
@@ -67,6 +69,41 @@ void TestJsValue::testArray(){
     actual_.str("");
     expected_ = "abcd17";
     actual_ <<  arrayVal ;
+    TestTools::report(actual_.str(), expected_, test_);
+
+
+  } 
+  catch(char const *s) {
+    std::cout << "Exception thrown in testArray: " << s << std::endl;
+  } catch (std::string s) {
+    std::cout << "Exception thrown in testArray: " << s << std::endl;
+  }
+}
+
+void TestJsValue::testObject(){
+
+  jsValue intVal(17),
+          stringVal("abcd");
+  std::vector<jsValue> myVector;
+  jsObject myObject;
+
+  try{
+    std::stringstream actual_;
+    std::string test_ = "testArray",
+                expected_ = "";
+    // -0- 
+    MYLOG(DEBUG, "entering");
+    myVector.clear();
+    myVector.push_back(intVal);
+    myVector.push_back(stringVal);
+    jsValue arrayVal(std::move(myVector));
+
+    // -1-   test  
+    actual_.str("");
+    expected_ = "abcd17";
+    myObject.add("a",intVal);
+    myObject.add("b",stringVal);
+    actual_ <<  myObject ;
     TestTools::report(actual_.str(), expected_, test_);
 
 
