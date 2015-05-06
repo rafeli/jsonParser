@@ -22,7 +22,7 @@ class calcxx_driver;
 %define parse.error verbose
 %code
 {
-# include "json.hpp"
+# include "driver.hpp"
 }
 %define api.token.prefix {TOK_}
 %token
