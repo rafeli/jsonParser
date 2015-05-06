@@ -57,6 +57,6 @@ blank [ \t]
 void
 calcxx_driver::scan_begin (std::string s)
 {
-  yy_scan_string(s.c_str());
+  yy_scan_string(s.c_str()); // see FLEX documentation
 }
 

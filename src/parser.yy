@@ -13,11 +13,11 @@ class calcxx_driver;
 // The parsing context.
 %param { calcxx_driver& driver }
 %locations
-%initial-action
-{
-  // Initialize the initial location.
-  @$.begin.filename = @$.end.filename = &driver.file;
-};
+// %initial-action
+// {
+//   // Initialize the initial location.
+//   @$.begin.filename = @$.end.filename = &driver.file;
+// };
 %define parse.trace
 %define parse.error verbose
 %code
@@ -37,14 +37,14 @@ class calcxx_driver;
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <int> NUMBER "number"
-%type  <std::string> jsonexp
+%type  <int> jsonexp
 %printer { yyoutput << $$; } <*>;
 %%
 %start jsonexp;
 
 jsonexp:
   %empty     {}
-| OBJECTOPEN IDENTIFIER ":" NUMBER OBJECTCLOSE    {$$ = $4;};
+| OBJECTOPEN IDENTIFIER ":" NUMBER OBJECTCLOSE    {driver.result = $4;};
 
 %%
 void
