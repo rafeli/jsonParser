@@ -11,7 +11,7 @@ OBJS     := src/jsValue.o src/jsObject.o src/scanner.o src/json.o src/parser.o
 all : src/parser test/testRunner
 
 install : $(OBJS)
-	cp src/json.hpp src/jsObject.hpp src/jsValue.hpp ~/local/include/momo
+	cp src/*.hpp src/*.hh ~/local/include/momo
 	ar rvs ~/local/lib/libjson.a $(OBJS)
 
 test : test/testRunner
