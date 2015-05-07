@@ -33,12 +33,14 @@ class calcxx_driver;
   OBJECTCLOSE  "}"
   ARRAYOPEN    "["
   ARRAYCLOSE   "]"
-  QUOTE        "DQ"
-  SQUOTE       "SQ"
+  QUOTE        "Double Quote"
+  SQUOTE       "'"
   COLON        ":"
 ;
-%token <std::string> IDENTIFIER "identifier"
-%token <int> NUMBER "number"
+// %token <std::string> IDENTIFIER "identifier"
+%token <int> NUMBER_I 
+%token <double> NUMBER_F 
+%token <std::string> STRING 
 %type  <jsValue> jsonexp
 %type  <jsValue> jsvalue
 %printer { yyoutput << $$; } <*>;
@@ -49,8 +51,10 @@ class calcxx_driver;
 
 jsonexp : jsvalue {driver.result =$1;};
 
-jsvalue : NUMBER   {jsValue v($1); $$ = std::move(v);}
-//      |   jsobject {}
+jsvalue : NUMBER_I   {jsValue v($1); $$ = std::move(v);}
+        | NUMBER_F   {jsValue v($1); $$ = std::move(v);}
+        | STRING   {jsValue v($1.substr(1,$1.size()-2)); $$ = std::move(v);}
+//        | jsobject {}
       ;
 
 //  jsobject : OBJECTOPEN objectContent OBJECTCLOSE {$$ = $2;};

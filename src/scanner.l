@@ -17,8 +17,11 @@
 static yy::location loc;
 %}
 %option noyywrap nounput batch debug noinput
+doubleQuotedString   \"[^\"]*\"
+singleQuotedString   \'[^\"]*\'
 id    [a-zA-Z][a-zA-Z_0-9]*
-int   [0-9]+
+int   [-+]?[0-9]+
+dbl   [-+]?[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?
 blank [ \t]
 
 %{
@@ -46,10 +49,16 @@ blank [ \t]
   long n = strtol (yytext, NULL, 10);
   if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
     driver.error (loc, "integer is out of range");
-  return yy::calcxx_parser::make_NUMBER(n, loc);
+  return yy::calcxx_parser::make_NUMBER_I(n, loc);
 }
 
-{id}       return yy::calcxx_parser::make_IDENTIFIER(yytext, loc);
+{dbl}      {
+  double n = std::stod (yytext, NULL);
+  return yy::calcxx_parser::make_NUMBER_F(n, loc);
+}
+
+{doubleQuotedString}       return yy::calcxx_parser::make_STRING(yytext, loc);
+{singleQuotedString}       return yy::calcxx_parser::make_STRING(yytext, loc);
 .          driver.error (loc, "invalid character");
 <<EOF>>    return yy::calcxx_parser::make_END(loc);
 %%

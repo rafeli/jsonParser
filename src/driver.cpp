@@ -26,11 +26,13 @@ calcxx_driver::parse (const std::string &s)
 void
 calcxx_driver::error (const yy::location& l, const std::string& m)
 {
-  std::cerr << l << ": " << m << std::endl;
+  throw "from jsonParser: " + m;
+//  std::cerr << l << ": " << m << std::endl;
 }
 
 void
 calcxx_driver::error (const std::string& m)
 {
-  std::cerr << m << std::endl;
+  throw "from jsonParser: " + m;
+//  std::cerr << m << std::endl;
 }
