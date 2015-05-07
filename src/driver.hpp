@@ -20,7 +20,7 @@ public:
 
   jsValue result;
   // Handling the scanner.
-  void scan_begin (std::string);
+  void scan_begin (std::string, int);
   bool trace_scanning;
   // Run the parser on file F.
   // Return 0 on success.

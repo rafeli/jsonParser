@@ -62,13 +62,15 @@ blank [ \t]
 
 {doubleQuotedString}       return yy::calcxx_parser::make_STRING(yytext, loc);
 {singleQuotedString}       return yy::calcxx_parser::make_STRING(yytext, loc);
+{id}                       return yy::calcxx_parser::make_IDENTIFIER(yytext, loc);
 .          driver.error (loc, "invalid character");
 <<EOF>>    return yy::calcxx_parser::make_END(loc);
 %%
 
 void
-calcxx_driver::scan_begin (std::string s)
+calcxx_driver::scan_begin (std::string s, int debug_)
 {
   yy_scan_string(s.c_str()); // see FLEX documentation
+  yyset_debug(debug_);            // aus scanner.cpp gelesen ..
 }
 

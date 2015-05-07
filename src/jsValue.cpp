@@ -14,10 +14,10 @@ void throw_(std::string s) {
      os << x.getInt();
      break;
    case T_DOUBLE:
-     os << x.getDbl();
+     os << std::scientific << x.getDbl();
      break;
    case T_STRING:
-     os << "\"" << x.getString() << "\"";
+     os << "\'" << x.getString() << "\'";
      break;
    case T_ARRAY:
      v = x.getArray();
@@ -27,6 +27,9 @@ void throw_(std::string s) {
        os << ", " << v[i] ;
      }
      os << "]";
+     break;
+   case T_OBJECT:
+     os << x.getObject();
      break;
    default:
      throw std::string("streaming unimplemented value type");
@@ -73,6 +76,12 @@ jsValue::jsValue(std::vector<jsValue> &&v) {
   arrayVal = v;
 }
 
+jsValue::jsValue(jsObject &&x) {
+  init();
+  type = T_OBJECT;
+  objectVal = x;
+}
+
 int jsValue::getType() const {
   return type;
 }
@@ -106,11 +115,17 @@ std::vector<jsValue>  jsValue::getArray() const {
   }
 }
 
+jsObject jsValue::getObject() const {
+  if (type != T_OBJECT) throw_("requesting object from non-object jsonValue");
+  return objectVal;
+}
+
 void jsValue::add(jsValue x) {
   if (type != T_ARRAY) throw_("adding element to non-array jsonValue");
   arrayVal.push_back(x);
 }
 
-void jsValue::add(std::string, jsValue) {
- throw_("Not implemented yet");
+void jsValue::add(std::string key_, jsValue value_) {
+  if (type != T_OBJECT) throw_("adding keyValuePair to non-object jsonValue");
+  objectVal.add(key_, value_);
 }

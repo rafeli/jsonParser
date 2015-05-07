@@ -16,7 +16,7 @@ int
 calcxx_driver::parse (const std::string &s)
 {
 //  file = f;
-  scan_begin (s);
+  scan_begin (s, false); // 2nd parameter turns Flex messages on/off
   yy::calcxx_parser parser (*this);
   parser.set_debug_level (trace_parsing);
   int res = parser.parse ();
@@ -26,13 +26,14 @@ calcxx_driver::parse (const std::string &s)
 void
 calcxx_driver::error (const yy::location& l, const std::string& m)
 {
-  throw "from jsonParser: " + m;
-//  std::cerr << l << ": " << m << std::endl;
+  std::stringstream errorMessage;
+  errorMessage.str("");
+  errorMessage << l << ": " << m ;
+  throw errorMessage.str();
 }
 
 void
 calcxx_driver::error (const std::string& m)
 {
   throw "from jsonParser: " + m;
-//  std::cerr << m << std::endl;
 }

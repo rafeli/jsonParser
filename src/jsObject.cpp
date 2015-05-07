@@ -26,3 +26,8 @@ jsObject::~jsObject() {
 void jsObject::add(std::string key, jsValue val) {
   myValues.insert(std::pair<std::string, jsValue>(key,val));
 }
+
+jsValue jsObject::get(std::string key) {
+  if (myValues.count(key) == 0) throw "requesting unknown field from jsObject: " + key ;
+  return myValues[key];
+}

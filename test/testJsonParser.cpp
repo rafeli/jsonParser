@@ -46,7 +46,8 @@ void TestJsonParser::testParseString() {
   // -2- just a string
   try {
     actual_.str("");
-    expected_=  testString = "\"12abc34\"";
+    expected_ = "\'12abc34\'";
+    testString = "\"12abc34\"";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
@@ -58,7 +59,7 @@ void TestJsonParser::testParseString() {
   // -2a- single quoted string
   try {
     actual_.str("");
-    expected_=  testString = "'12abc34'";
+    expected_= testString =  "\'12abc34\'";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
@@ -70,7 +71,7 @@ void TestJsonParser::testParseString() {
   // -2- just a double
   try {
     actual_.str("");
-    expected_=  testString = "6.0223E-23";
+    expected_=  testString = "6.022300e-23";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
@@ -82,7 +83,7 @@ void TestJsonParser::testParseString() {
   // -3- a simple array
   try {
     actual_.str("");
-    expected_=  testString = "[12, 'abcdef', 1.078]";
+    expected_=  testString = "[12, 'abcdef', 1.078000e+00]";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
@@ -90,7 +91,18 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-
+  // -4- a simple object
+  try {
+    actual_.str("");
+    expected_= "12, [12, 'abc']";
+    testString = "{myInt : 12, myArray : [12, 'abc']}";
+    driver.parse(testString);
+    jsObject result = driver.result.getObject();
+    actual_ << result.get("myInt") << ", " << result.get("myArray") ; 
+    TestTools::report(actual_.str(), expected_, test_); 
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
 
   // ?? exit
   MYLOG(DEBUG,"EXIT");

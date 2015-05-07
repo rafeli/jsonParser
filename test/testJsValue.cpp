@@ -37,7 +37,7 @@ void TestJsValue::testInt(){
 
     // -1-   test  
     actual_.str("");
-    expected_ = "abcd17";
+    expected_ = "\'abcd\'17";
     actual_ <<  stringVal << intVal ;
     TestTools::report(actual_.str(), expected_, test_);
 
@@ -68,16 +68,13 @@ void TestJsValue::testArray(){
 
     // -1-   test  
     actual_.str("");
-    expected_ = "abcd17";
+    expected_ = "[17, \'abcd\']";
     actual_ <<  arrayVal ;
     TestTools::report(actual_.str(), expected_, test_);
 
 
     // ???
     MYLOG(DEBUG, "EXIT");
-  } 
-  catch(char const *s) {
-    std::cout << "Exception thrown in testArray: " << s << std::endl;
   } catch (std::string s) {
     std::cout << "Exception thrown in testArray: " << s << std::endl;
   }
@@ -86,35 +83,37 @@ void TestJsValue::testArray(){
 void TestJsValue::testObject(){
 
   jsValue intVal(17),
-          stringVal("abcd");
+          stringVal("abcd"),
+          dblVal(1.17E+003);
   std::vector<jsValue> myVector;
   jsObject myObject;
 
   try{
     std::stringstream actual_;
-    std::string test_ = "testArray",
+    std::string test_ = "testObject",
                 expected_ = "";
     // -0- 
     MYLOG(DEBUG, "entering");
     myVector.clear();
     myVector.push_back(intVal);
     myVector.push_back(stringVal);
+    myVector.push_back(dblVal);
     jsValue arrayVal(std::move(myVector));
+    myObject.add("myInt", intVal);
+    myObject.add("myString", stringVal);
+    myObject.add("myDouble", dblVal);
+    myObject.add("myVector", arrayVal);
+
 
     // -1-   test  
     actual_.str("");
-    expected_ = "abcd17";
-    myObject.add("a",intVal);
-    myObject.add("b",stringVal);
+    expected_ = "{myDouble:1.170000e+03, myInt:17, myString:'abcd', myVector:[17, 'abcd', 1.170000e+03]}";
     actual_ <<  myObject ;
     TestTools::report(actual_.str(), expected_, test_);
 
 
     // ???
     MYLOG(DEBUG, "EXIT");
-  } 
-  catch(char const *s) {
-    std::cout << "Exception thrown in testArray: " << s << std::endl;
   } catch (std::string s) {
     std::cout << "Exception thrown in testArray: " << s << std::endl;
   }

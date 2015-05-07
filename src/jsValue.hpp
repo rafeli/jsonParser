@@ -12,7 +12,7 @@
 #define T_DOUBLE 1
 #define T_STRING 2
 #define T_ARRAY 3
-#define T_OBJECT 3
+#define T_OBJECT 4
 
 
 class jsValue {
@@ -45,6 +45,8 @@ class jsValue {
  
   jsValue(std::vector<jsValue> &&);
 
+  jsValue(jsObject &&);
+
   void add(jsValue); // add to array
 
   void add(std::string, jsValue); // add to object
@@ -56,6 +58,8 @@ class jsValue {
   double getDbl() const;
 
   std::vector<jsValue> getArray() const;
+
+  jsObject getObject() const;
 
   std::string  getString() const;
 

@@ -17,6 +17,8 @@ class jsObject {
   ~jsObject();
 
   void add(std::string, jsValue);
+
+  jsValue get(std::string);
 };
 
 std::ostream& operator<<(std::ostream& os, const jsObject& x);
