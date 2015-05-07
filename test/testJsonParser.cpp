@@ -28,6 +28,9 @@ void TestJsonParser::testParseString() {
           expected_ = "",
            testString;
 
+  // -0- Entering
+  MYLOG(DEBUG,"ENTER");
+
   // -1- just an int
   try {
     actual_.str("");
@@ -35,6 +38,7 @@ void TestJsonParser::testParseString() {
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
+    MYLOG(DEBUG,"Test int complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s;
   }
@@ -46,6 +50,7 @@ void TestJsonParser::testParseString() {
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
+    MYLOG(DEBUG,"Test String complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
@@ -57,6 +62,7 @@ void TestJsonParser::testParseString() {
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
+    MYLOG(DEBUG,"Test Single Quoted String complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
@@ -68,8 +74,11 @@ void TestJsonParser::testParseString() {
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
+    MYLOG(DEBUG,"Test double complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
+  // ?? exit
+  MYLOG(DEBUG,"EXIT");
 }

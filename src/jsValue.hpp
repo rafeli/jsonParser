@@ -21,7 +21,9 @@ class jsValue {
 
   int type;
 
-  int *intVal; // TODO: use int && intVal and std::move()
+  int intVal; 
+
+  double dblVal; 
 
   std::string stringVal; // TODO: use string && stringVal and std::move()
 
@@ -37,6 +39,8 @@ class jsValue {
 
   jsValue(const int &);
 
+  jsValue(const double &);
+
   jsValue(const std::string &);
  
   jsValue(std::vector<jsValue> &&);
@@ -44,6 +48,8 @@ class jsValue {
   int getType() const;
 
   int getInt() const;
+
+  double getDbl() const;
 
   std::vector<jsValue> getArray() const;
 

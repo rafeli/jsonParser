@@ -1,6 +1,10 @@
 #include "jsObject.hpp"
 #include "jsValue.hpp"
 
+void throw_(std::string s) {
+  throw s;
+}
+
  std::ostream& operator<<(std::ostream& os, const jsValue& x) {
    std::vector<jsValue> v;
 
@@ -8,6 +12,9 @@
    switch (x.getType()) {
    case T_INT:
      os << x.getInt();
+     break;
+   case T_DOUBLE:
+     os << x.getDbl();
      break;
    case T_STRING:
      os << "\"" << x.getString() << "\"";
@@ -33,7 +40,7 @@
 void jsValue::init() {
 
   type = T_UNDEFINED;
-  intVal = NULL;
+  intVal = 0;
   arrayVal.clear();;
   stringVal = "";
 }
@@ -45,8 +52,13 @@ jsValue::jsValue() {
 jsValue::jsValue(const int &v) {
   init();
   type = T_INT;
-  intVal = new int;
-  (*intVal) = v;
+  intVal = v;
+}
+
+jsValue::jsValue(const double &v) {
+  init();
+  type = T_DOUBLE;
+  dblVal = v;
 }
 
  jsValue::jsValue(const std::string &s) {
@@ -67,10 +79,15 @@ int jsValue::getType() const {
 
 int jsValue::getInt() const {
   if (type == T_INT) {
-    return (*intVal);
+    return (intVal);
   } else {
     throw "requesting int from non-int jsonValue";
   }
+}
+
+double jsValue::getDbl() const {
+  if (type != T_DOUBLE) throw_("requesting Double from non-dbl jsonValue");
+  return (dblVal);
 }
 
 std::string  jsValue::getString() const {

@@ -33,7 +33,7 @@ void TestJsValue::testInt(){
     std::string test_ = "testInt",
                 expected_ = "";
     // -0- 
-    MYLOG(DEBUG, "entering");
+    MYLOG(DEBUG, "ENTER");
 
     // -1-   test  
     actual_.str("");
@@ -41,7 +41,8 @@ void TestJsValue::testInt(){
     actual_ <<  stringVal << intVal ;
     TestTools::report(actual_.str(), expected_, test_);
 
-
+    // ???
+    MYLOG(DEBUG, "EXIT");
   } 
   catch(char const *s) {
     std::cout << "Exception thrown in testInt: " << s << std::endl;
@@ -72,6 +73,8 @@ void TestJsValue::testArray(){
     TestTools::report(actual_.str(), expected_, test_);
 
 
+    // ???
+    MYLOG(DEBUG, "EXIT");
   } 
   catch(char const *s) {
     std::cout << "Exception thrown in testArray: " << s << std::endl;
@@ -107,6 +110,8 @@ void TestJsValue::testObject(){
     TestTools::report(actual_.str(), expected_, test_);
 
 
+    // ???
+    MYLOG(DEBUG, "EXIT");
   } 
   catch(char const *s) {
     std::cout << "Exception thrown in testArray: " << s << std::endl;

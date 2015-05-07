@@ -49,10 +49,11 @@ class calcxx_driver;
 
 %%
 
-jsonexp : jsvalue {driver.result =$1;};
+jsonexp : jsvalue {driver.result =std::move($1);};
 
-jsvalue : NUMBER_I   {jsValue v($1); $$ = std::move(v);}
-        | NUMBER_F   {jsValue v($1); $$ = std::move(v);}
+jsvalue : NUMBER_I   {$$ = *(new jsValue($1));}
+        | NUMBER_F   {$$ = *(new jsValue($1)); std::cout << $1 << std::endl;}
+//        | NUMBER_F   {jsValue v($1); $$ = std::move(v);}
         | STRING   {jsValue v($1.substr(1,$1.size()-2)); $$ = std::move(v);}
 //        | jsobject {}
       ;
