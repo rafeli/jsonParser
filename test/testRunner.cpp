@@ -19,8 +19,8 @@ int main(int argc, char ** argv) {
   TestTools::prepare(logFileName);
 
   // -2- test each unit
-//  TestJsonParser testJsonParser;
-//  testJsonParser.testAll();
+  TestJsonParser testJsonParser;
+  testJsonParser.testAll();
   TestJsValue testJsValue;
   testJsValue.testAll();
 

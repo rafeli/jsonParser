@@ -8,6 +8,8 @@
 %code requires
 {
 # include <string>
+# include "jsObject.hpp"
+# include "jsValue.hpp"
 class calcxx_driver;
 }
 // The parsing context.
@@ -37,14 +39,25 @@ class calcxx_driver;
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <int> NUMBER "number"
-%type  <int> jsonexp
+%type  <jsValue> jsonexp
+%type  <jsValue> jsvalue
 %printer { yyoutput << $$; } <*>;
-%%
+
 %start jsonexp;
 
-jsonexp:
-  %empty     {}
-| OBJECTOPEN IDENTIFIER ":" NUMBER OBJECTCLOSE    {driver.result = $4;};
+%%
+
+jsonexp : jsvalue {driver.result =$1;};
+
+jsvalue : NUMBER   {$$ = new jsValue($1);}
+//      |   jsobject {}
+      ;
+
+//  jsobject : OBJECTOPEN objectContent OBJECTCLOSE {$$ = $2;};
+//  
+//  objectContent :
+//    %empty     {}
+//  | OBJECTOPEN IDENTIFIER ":" NUMBER OBJECTCLOSE    {driver.result = $4;};
 
 %%
 void

@@ -12,7 +12,7 @@ all : src/parser test/testRunner
 test : test/testRunner
 
 test/testRunner : src/parser $(TESTOBJS)
-	$(CC) $(LFLAGS) -o test/testRunner src/jsValue.o src/jsObject.o $(TESTOBJS) -lmomoLogging
+	$(CC) $(LFLAGS) -o test/testRunner src/jsValue.o src/jsObject.o src/scanner.o src/driver.o src/parser.o $(TESTOBJS) -lmomoLogging
 
 test/%.o: test/%.cpp test/%.hpp
 	$(CC) -c $(INCLUDES) $(CFLAGS) $<

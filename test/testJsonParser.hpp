@@ -3,6 +3,7 @@
 
 #include "testTools.hpp"
 #include "momo/logging.hpp"
+#include "../src/driver.hpp"
 
 class TestJsonParser {
 
