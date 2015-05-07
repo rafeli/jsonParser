@@ -33,6 +33,8 @@ class jsValue {
 
   public:
 
+  jsValue();
+
   jsValue(const int &);
 
   jsValue(const std::string &);

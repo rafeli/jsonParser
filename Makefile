@@ -19,7 +19,7 @@ test/%.o: test/%.cpp test/%.hpp
 	mv *.o test
 
 src/parser : src/scanner.o src/main.o src/driver.o src/parser.o src/jsValue.o src/jsObject.o
-	cd src; $(CC) -o parser main.o parser.o scanner.o driver.o
+	cd src; $(CC) -o parser main.o parser.o scanner.o driver.o jsValue.o jsObject.o
 
 src/scanner.o : src/scanner.cpp src/driver.hpp src/parser.tab.hh
 	cd src; $(CC) $(CFLAGS) -c scanner.cpp
@@ -36,7 +36,7 @@ src/parser.o : src/parser.tab.cc
 src/parser.tab.cc src/parser.tab.hh src/position.hh src/location.hh src/stack.hh : src/parser.yy
 	cd src; bison parser.yy
 
-src/scanner.cpp: src/scanner.l
+src/scanner.cpp: src/scanner.l src/driver.hpp
 	flex -o src/scanner.cpp src/scanner.l
 
 src/jsValue.o: src/jsValue.cpp src/jsValue.hpp

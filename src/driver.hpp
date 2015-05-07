@@ -18,7 +18,7 @@ public:
 
   std::map<std::string, int> variables;
 
-//  jsValue result;
+  jsValue result;
   // Handling the scanner.
   void scan_begin (std::string);
   bool trace_scanning;

@@ -9,7 +9,7 @@ main (int argc, char *argv[])
   int res = 0;
   calcxx_driver driver;
   driver.parse(test);
-//  std::cout << driver.result << std::endl;
+  std::cout << driver.result << std::endl;
   return res;
 }
 

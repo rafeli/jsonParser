@@ -38,6 +38,10 @@ void jsValue::init() {
   stringVal = "";
 }
 
+jsValue::jsValue() {
+  init();
+}
+
 jsValue::jsValue(const int &v) {
   init();
   type = T_INT;

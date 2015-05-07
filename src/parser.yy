@@ -49,7 +49,7 @@ class calcxx_driver;
 
 jsonexp : jsvalue {driver.result =$1;};
 
-jsvalue : NUMBER   {$$ = new jsValue($1);}
+jsvalue : NUMBER   {jsValue v($1); $$ = std::move(v);}
 //      |   jsobject {}
       ;
 
