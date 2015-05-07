@@ -40,9 +40,12 @@ blank [ \t]
 [\n]+      loc.lines (yyleng); loc.step ();
 "{"        return yy::calcxx_parser::make_OBJECTOPEN(loc);
 "}"        return yy::calcxx_parser::make_OBJECTCLOSE(loc);
+"["        return yy::calcxx_parser::make_ARRAYOPEN(loc);
+"]"        return yy::calcxx_parser::make_ARRAYCLOSE(loc);
 "\""       return yy::calcxx_parser::make_QUOTE(loc);
 "\'"       return yy::calcxx_parser::make_SQUOTE(loc);
 ":"        return yy::calcxx_parser::make_COLON(loc);
+","        return yy::calcxx_parser::make_COMMA(loc);
 
 {int}      {
   errno = 0;

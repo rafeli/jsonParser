@@ -45,6 +45,10 @@ class jsValue {
  
   jsValue(std::vector<jsValue> &&);
 
+  void add(jsValue); // add to array
+
+  void add(std::string, jsValue); // add to object
+
   int getType() const;
 
   int getInt() const;

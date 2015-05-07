@@ -105,3 +105,12 @@ std::vector<jsValue>  jsValue::getArray() const {
     throw "requesting array from non-array jsonValue";
   }
 }
+
+void jsValue::add(jsValue x) {
+  if (type != T_ARRAY) throw_("adding element to non-array jsonValue");
+  arrayVal.push_back(x);
+}
+
+void jsValue::add(std::string, jsValue) {
+ throw_("Not implemented yet");
+}

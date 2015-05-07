@@ -79,6 +79,19 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
+  // -3- a simple array
+  try {
+    actual_.str("");
+    expected_=  testString = "[12, 'abcdef', 1.078]";
+    driver.parse(testString);
+    actual_ << driver.result; 
+    TestTools::report(actual_.str(), expected_, test_); 
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
+
+
+
   // ?? exit
   MYLOG(DEBUG,"EXIT");
 }
