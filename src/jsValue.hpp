@@ -63,6 +63,9 @@ class jsValue {
 
   std::string  getString() const;
 
+  // convenience:
+  std::vector<double> getDblArray() const;
+
 
 };
 

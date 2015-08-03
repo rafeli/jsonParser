@@ -68,7 +68,20 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
+  // -2c- string with \t and \n
+  try {
+    actual_.str("");
+    expected_= testString =  "\'12\tabc\n34\'";
+    driver.parse(testString);
+    actual_ << driver.result; 
+    TestTools::report(actual_.str(), expected_, test_); 
+    MYLOG(DEBUG,"Test Single Quoted String complete");
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
+
   // -2- just a double
+  test_ = "parseDouble";
   try {
     actual_.str("");
     expected_=  testString = "6.022300e-23";
@@ -81,6 +94,7 @@ void TestJsonParser::testParseString() {
   }
 
   // -3- a simple array
+  test_ = "parseArray";
   try {
     actual_.str("");
     expected_=  testString = "[12, 'abcdef', 1.078000e+00]";
@@ -92,13 +106,28 @@ void TestJsonParser::testParseString() {
   }
 
   // -4- a simple object
+  test_ = "parseObject";
   try {
     actual_.str("");
-    expected_= "12, [12, 'abc']";
-    testString = "{myInt : 12, myArray : [12, 'abc']}";
+    expected_= "12";
+    testString = "{\"myInt\" : 12}";
     driver.parse(testString);
     jsObject result = driver.result.getObject();
-    actual_ << result.get("myInt") << ", " << result.get("myArray") ; 
+    actual_ << result.get("myInt")  ; 
+//    actual_ << result.get("myInt") << ", " << result.get("myArray") ; 
+    TestTools::report(actual_.str(), expected_, test_); 
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
+
+  // -5- a simple object
+  try {
+    actual_.str("");
+    expected_= testString = "{\"myInt\" : 12, \"myArray\" : [12, \"abc\"]}";
+    driver.parse(testString);
+    actual_ << driver.result.getObject();
+//    jsObject result = driver.result.getObject();
+//    actual_ << result.get("myInt") << ", " << result.get("myArray") ; 
     TestTools::report(actual_.str(), expected_, test_); 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;

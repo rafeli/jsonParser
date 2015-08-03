@@ -10,7 +10,7 @@ class jsObject {
 
   public:
 
-  std::map<std::string, jsValue> myValues;
+  std::map<std::string, jsValue> myValues; // dies soll eher private sein ??
 
   jsObject();
 
@@ -19,6 +19,9 @@ class jsObject {
   void add(std::string, jsValue);
 
   jsValue get(std::string);
+
+  bool has(std::string);
+
 };
 
 std::ostream& operator<<(std::ostream& os, const jsObject& x);

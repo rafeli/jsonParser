@@ -8,15 +8,13 @@ TESTSRCS := $(wildcard test/*.cpp)
 TESTOBJS := $(TESTSRCS:.cpp=.o)
 OBJS     := src/jsValue.o src/jsObject.o src/scanner.o src/json.o src/parser.o
 
-all : src/parser test/testRunner
+all : test/testRunner
 
 install : $(OBJS)
 	cp src/*.hpp src/*.hh ~/local/include/momo
 	ar rvs ~/local/lib/libjson.a $(OBJS)
 
-test : test/testRunner
-
-test/testRunner : $(OBJS) $(TESTOBJS)
+test/testRunner : install $(OBJS) $(TESTOBJS)
 	$(CC) $(LFLAGS) -o test/testRunner $(TESTOBJS) -lmomoLogging -ljson
 
 test/%.o: test/%.cpp test/%.hpp

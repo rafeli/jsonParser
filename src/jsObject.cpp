@@ -31,3 +31,7 @@ jsValue jsObject::get(std::string key) {
   if (myValues.count(key) == 0) throw "requesting unknown field from jsObject: " + key ;
   return myValues[key];
 }
+
+bool jsObject::has(std::string key) {
+  return (myValues.count(key) > 0) ;
+}

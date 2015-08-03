@@ -1,11 +1,10 @@
 #include "jsObject.hpp"
 #include "jsValue.hpp"
 
-void throw_(std::string s) {
-  throw s;
-}
+// casts char* Exception into std::string
+void throw_(std::string s) { throw s;}
 
- std::ostream& operator<<(std::ostream& os, const jsValue& x) {
+std::ostream& operator<<(std::ostream& os, const jsValue& x) {
    std::vector<jsValue> v;
 
    // -1- stream depd. on type (recursive for array and object)
@@ -32,7 +31,7 @@ void throw_(std::string s) {
      os << x.getObject();
      break;
    default:
-     throw std::string("streaming unimplemented value type");
+     throw_("streaming unimplemented value type");
    }
 
    // -2- return
@@ -87,32 +86,46 @@ int jsValue::getType() const {
 }
 
 int jsValue::getInt() const {
-  if (type == T_INT) {
-    return (intVal);
-  } else {
-    throw "requesting int from non-int jsonValue";
-  }
+
+  if (type != T_INT) throw_( "requesting int from non-int jsonValue");
+  return (intVal);
 }
 
 double jsValue::getDbl() const {
-  if (type != T_DOUBLE) throw_("requesting Double from non-dbl jsonValue");
-  return (dblVal);
+  if (type != T_DOUBLE && type != T_INT) throw_("requesting Double from non-dbl jsonValue");
+  if (type == T_DOUBLE) {
+    return (dblVal);
+  } else {
+    return (1.0*intVal);
+  }
 }
 
 std::string  jsValue::getString() const {
-  if (type == T_STRING) {
-    return stringVal;
-  } else {
-    throw "requesting string from non-string jsonValue";
-  }
+
+  if (type != T_STRING) throw_("requesting string from non-string jsonValue");
+  return stringVal;
+
 }
 
 std::vector<jsValue>  jsValue::getArray() const {
-  if (type == T_ARRAY) {
-    return arrayVal;
-  } else {
-    throw "requesting array from non-array jsonValue";
+  
+  if (type != T_ARRAY) throw_( "requesting array from non-array jsonValue");
+  return arrayVal;
+}
+
+std::vector<double>  jsValue::getDblArray() const {
+
+  try {
+    std::vector<jsValue> v = getArray();
+    std::vector<double> x;
+    for (unsigned int i=0; i<v.size(); i++) {
+       x.push_back(v[i].getDbl()) ;
+     }
+    return x;
+  } catch (std::string s) {
+    throw "Constructing double array: " + s;
   }
+
 }
 
 jsObject jsValue::getObject() const {
