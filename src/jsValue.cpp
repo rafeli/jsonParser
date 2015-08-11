@@ -92,7 +92,7 @@ int jsValue::getInt() const {
 }
 
 double jsValue::getDbl() const {
-  if (type != T_DOUBLE && type != T_INT) throw_("requesting Double from non-dbl jsonValue");
+  if (type != T_DOUBLE && type != T_INT) throw_("requesting Double from non-dbl jsonValue: " + stringVal);
   if (type == T_DOUBLE) {
     return (dblVal);
   } else {
