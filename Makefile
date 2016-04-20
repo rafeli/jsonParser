@@ -2,6 +2,7 @@ CC = g++
 CFLAGS = -Wall -g -std=c++0x
 LFLAGS = -L ~/local/lib
 INCLUDES = -I ~/local/include
+BISON = ~/local/bin/bison
 
 
 TESTSRCS := $(wildcard test/*.cpp)
@@ -31,7 +32,7 @@ src/parser.o : src/parser.tab.cc
 	cd src; $(CC) $(CFLAGS) -c -o parser.o parser.tab.cc
 
 src/parser.tab.cc src/parser.tab.hh src/position.hh src/location.hh src/stack.hh : src/parser.yy
-	cd src; bison parser.yy
+	cd src; $(BISON) parser.yy
 
 src/scanner.cpp: src/scanner.l src/json.hpp
 	flex -o src/scanner.cpp src/scanner.l
