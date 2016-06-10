@@ -31,5 +31,10 @@ public:
   // Error handling.
   void error (const yy::location& l, const std::string& m);
   void error (const std::string& m);
+
 };
+
+// added 2016-04-15: easier to use
+jsObject getJSONObject(const std::string&);
+
 #endif // ! CALCXX_DRIVER_HH
