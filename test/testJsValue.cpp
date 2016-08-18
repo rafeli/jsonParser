@@ -64,14 +64,33 @@ void TestJsValue::testArray(){
     myVector.clear();
     myVector.push_back(intVal);
     myVector.push_back(stringVal);
-    jsValue arrayVal(std::move(myVector));
+    jsValue arrayVal(std::move(myVector)); // 2016: was macht move noch mal ???
 
-    // -1-   test  
+    // -1-   test read JSON Array 
     actual_.str("");
     expected_ = "[17, \'abcd\']";
     actual_ <<  arrayVal ;
     TestTools::report(actual_.str(), expected_, test_);
 
+    // -2- test read CPP Array into JSON
+    actual_.str("");
+    expected_ = "[\'aaa\', \'bbb\'][17, -129][-1.000000e+00, 1.414230e+00]";
+    std::vector<std::string> stringVector;
+    std::vector<int> intVector;
+    std::vector<double> dblVector;
+    stringVector.push_back("aaa");
+    stringVector.push_back("bbb");
+    intVector.push_back(17);
+    intVector.push_back(-129);
+    dblVector.push_back(-1.0);
+    dblVector.push_back(1.41423);
+    jsValue x1(stringVector);
+    jsValue x2(intVector);
+    jsValue x3(dblVector);
+    std::string x3s = x3.stringify();
+    actual_ <<  x1 << x2 << x3s ;
+    TestTools::report(actual_.str(), expected_, test_);
+    
 
     // ???
     MYLOG(DEBUG, "EXIT");

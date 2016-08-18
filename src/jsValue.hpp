@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <ostream>
+#include <sstream>
 
 #include "jsObject.hpp"
 
@@ -47,6 +48,12 @@ class jsValue {
 
   jsValue(jsObject &&);
 
+  // following  not needed for parsing, added 2016 to allow stringify
+  jsValue(std::vector<std::string> &);
+  jsValue(std::vector<double> &);
+  jsValue(std::vector<int> &);
+  std::string stringify();
+
   void add(jsValue); // add to array
 
   void add(std::string, jsValue); // add to object
@@ -61,7 +68,7 @@ class jsValue {
 
   jsObject getObject() const;
 
-  std::string  getString() const;
+  std::string getString() const;
 
   // convenience:
   std::vector<double> getDblArray() const;

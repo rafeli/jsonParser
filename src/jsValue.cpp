@@ -38,6 +38,12 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
    return os;
  }
 
+std::string jsValue::stringify() {
+  std::stringstream ss;
+  ss.str("");
+  ss << (*this); 
+  return ss.str();
+}
 
 void jsValue::init() {
 
@@ -80,6 +86,40 @@ jsValue::jsValue(jsObject &&x) {
   type = T_OBJECT;
   objectVal = x;
 }
+
+// new Constructors, not needed for parsing but for stringify
+// havent managed this with templates (linker doesnt find specific functions)
+jsValue::jsValue(std::vector<std::string> &v) {
+  init();
+  type = T_ARRAY;
+  arrayVal.clear();
+  for (unsigned int i=0; i<v.size(); i++) {
+    jsValue e(v[i]);
+    arrayVal.push_back(e);
+  }
+}
+
+jsValue::jsValue(std::vector<double> &v) {
+  init();
+  type = T_ARRAY;
+  arrayVal.clear();
+  for (unsigned int i=0; i<v.size(); i++) {
+    jsValue e(v[i]);
+    arrayVal.push_back(e);
+  }
+}
+ 
+jsValue::jsValue(std::vector<int> &v) {
+  init();
+  type = T_ARRAY;
+  arrayVal.clear();
+  for (unsigned int i=0; i<v.size(); i++) {
+    jsValue e(v[i]);
+    arrayVal.push_back(e);
+  }
+}
+
+
 
 int jsValue::getType() const {
   return type;
