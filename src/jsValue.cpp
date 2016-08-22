@@ -16,7 +16,7 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      os << std::scientific << x.getDbl();
      break;
    case T_STRING:
-     os << "\'" << x.getString() << "\'";
+     os << "\"" << x.getString() << "\"";
      break;
    case T_ARRAY:
      v = x.getArray();
