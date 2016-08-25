@@ -15,9 +15,13 @@
 
 // The location of the current token.
 static yy::location loc;
+// regexp doubleQuotedString:
+// read opening double quotes, 
+// read any repetition of: (either \" or something neiter \ nor ")
+// read closing double quotes
 %}
 %option noyywrap nounput batch debug noinput
-doubleQuotedString   \"[^\"]*\"
+doubleQuotedString   \"(\\\"|[^\"])*\"
 singleQuotedString   \'[^\"]*\'
 id    [a-zA-Z][a-zA-Z_0-9]*
 int   [-+]?[0-9]+
@@ -42,8 +46,6 @@ blank [ \t]
 "}"        return yy::calcxx_parser::make_OBJECTCLOSE(loc);
 "["        return yy::calcxx_parser::make_ARRAYOPEN(loc);
 "]"        return yy::calcxx_parser::make_ARRAYCLOSE(loc);
-"\""       return yy::calcxx_parser::make_QUOTE(loc);
-"\'"       return yy::calcxx_parser::make_SQUOTE(loc);
 ":"        return yy::calcxx_parser::make_COLON(loc);
 ","        return yy::calcxx_parser::make_COMMA(loc);
 
@@ -60,7 +62,31 @@ blank [ \t]
   return yy::calcxx_parser::make_NUMBER_F(n, loc);
 }
 
-{doubleQuotedString}       return yy::calcxx_parser::make_STRING(yytext, loc);
+{doubleQuotedString} {
+
+  std::size_t pos=0;
+  std::string s=yytext; // darf ich neu allokieren ???
+
+  // ??? warum muss ich enclosing doublequotes nicht wegnehmen ???
+  // folgendes nimmt 1. und letzte char des enthaltenden strings weg
+  //  s = s.substr(1,s.size() - 2);
+
+  // decode string from json (i.e. unescape \\ and \" )
+  // following should *not* decode e.g.:  abc\\"def 
+  while ((pos=s.find("\\\"",pos)) != std::string::npos) {
+    s.replace(pos,2,"\"");
+    pos+=1;
+  }
+  pos=0;
+  while ((pos=s.find("\\\\",pos)) != std::string::npos) {
+    s.replace(pos,2,"\\");
+    pos+=1;
+  }
+
+//  std::cout << "yytext: " << yytext << "\ndecoded:" << s <<std::endl;
+  
+  return yy::calcxx_parser::make_STRING(s, loc);
+}
 {singleQuotedString}       return yy::calcxx_parser::make_STRING(yytext, loc);
 {id}                       return yy::calcxx_parser::make_IDENTIFIER(yytext, loc);
 .          driver.error (loc, "invalid character");

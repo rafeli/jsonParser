@@ -20,8 +20,79 @@ void TestJsValue::testAll(){
 
   testObject();
 
+  testString();
+
 }
 
+
+void TestJsValue::testString(){
+
+  std::string plain="abcd",                                //  abcd
+          quote="ein \" quote",                            //  ein " quote
+          escQuote="escaped \\\" quote",                   //  escaped \" quote
+          plainJSON = "\"abcd\"",                          //  "abcd"
+          quoteJSON = "\"ein \\\" quote\"",                //  "ein \" quote"
+          escQuoteJSON = "\"escaped \\\\\\\" quote\"";     //  "escaped \\\" quote"
+
+  jsValue jsPlain(plain), jsQuote(quote), jsEscQuote(escQuote);
+
+  try{
+    std::stringstream actual_;
+    std::string test_ = "testString",
+                expected_ = "";
+    // -0- 
+    MYLOG(DEBUG, "ENTER");
+
+    // -1- test constructor, these should take strings (without outer double quotes)
+    //     and handle contained double quotes correctly  
+    TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(plain string).stringify()");
+    TestTools::report(jsQuote.stringify(), quoteJSON, "jsValue(string w. double quote).stringify()");
+    TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(string w. escape).stringify()");
+
+    // -2- getString should give original string 
+    TestTools::report(jsPlain.getString(), plain, "jsValue(plain string).getString()");
+    TestTools::report(jsQuote.getString(), quote, "jsValue(string w. double quote).getString()");
+    TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(string w. escape).getString()");
+
+    // -3- same should work with getJSONValue, but this takes a JSON-string,
+    //     i.e. outer double quotes must be contained
+    TestTools::report(getJSONValue(plainJSON).stringify(), plainJSON, "getJSONValue(plain string)");
+    TestTools::report(getJSONValue(quoteJSON).stringify(), quoteJSON, "getJSONValue(quote)");
+    TestTools::report(getJSONValue(escQuoteJSON).stringify(), escQuoteJSON, "getJSONValue(escaped quote)");
+
+    TestTools::report(getJSONValue(plainJSON).getString(), plain, "getJSONValue(plain string)");
+    TestTools::report(getJSONValue(quoteJSON).getString(), quote, "getJSONValue(quote)");
+    TestTools::report(getJSONValue(escQuoteJSON).getString(), escQuote, "getJSONValue(escaped quote)");
+
+    // -4- tests on incorrect strings
+    try {
+      getJSONValue("a\\b").getString();
+      TestTools::report("a\\b incorrect", getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
+    } catch (std::string s) {
+      TestTools::report("a\\b no JSON", "a\\b no JSON", "getJSONValue(non-json)");
+    }
+
+    try {
+      getJSONValue("a\"b").getString();
+      TestTools::report("a\"b incorrect", getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
+    } catch (std::string s) {
+      TestTools::report("a\"b no JSON", "a\"b no JSON", "getJSONValue(non-json)");
+    }
+
+    try {
+      getJSONValue("a\\\\\"b").getString();
+      TestTools::report("a\\\\\"b incorrect", getJSONValue("a\\\\\"b").getString(), "getJSONValue(non-json)");
+    } catch (std::string s) {
+      TestTools::report("a\\\\\"b no JSON", "a\\\\\"b no JSON", "getJSONValue(non-json)");
+    }
+
+    // ???
+    MYLOG(DEBUG, "EXIT");
+  } 
+  catch(std::string s) {
+    std::cout << "Exception thrown in testString: " << s << std::endl;
+  }
+}
 
 void TestJsValue::testInt(){
 

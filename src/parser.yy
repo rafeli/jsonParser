@@ -33,8 +33,6 @@ class calcxx_driver;
   OBJECTCLOSE  "}"
   ARRAYOPEN    "["
   ARRAYCLOSE   "]"
-  QUOTE        "Double Quote"
-  SQUOTE       "'"
   COLON        ":"
   COMMA        ","
 ;

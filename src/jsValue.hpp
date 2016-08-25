@@ -36,7 +36,7 @@ class jsValue {
 
   public:
 
-  jsValue();
+  jsValue(); // TODO: is this needed ???
 
   jsValue(const int &);
 
@@ -69,6 +69,8 @@ class jsValue {
   jsObject getObject() const;
 
   std::string getString() const;
+
+  std::string getEncodedString() const;
 
   // convenience:
   std::vector<double> getDblArray() const;

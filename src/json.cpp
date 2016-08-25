@@ -56,10 +56,8 @@ jsValue getJSONValue(const std::string& m) {
     driver.parse(m);
     return driver.result;
   } catch (std::string e) {
-    throw std::string(" reading JSON Object from String:" + e );
+    throw std::string(" reading JSON Value from String:" + e );
   }
 
 }
 
-
-// hier war ich: getJSValue ist noch einfacher to schreiben !!

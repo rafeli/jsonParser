@@ -16,7 +16,7 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      os << std::scientific << x.getDbl();
      break;
    case T_STRING:
-     os << "\"" << x.getString() << "\"";
+     os << "\"" << x.getEncodedString() << "\"";
      break;
    case T_ARRAY:
      v = x.getArray();
@@ -144,6 +144,28 @@ std::string  jsValue::getString() const {
 
   if (type != T_STRING) throw_("requesting string from non-string jsonValue");
   return stringVal;
+
+}
+
+std::string jsValue::getEncodedString() const {
+
+  std::string s = stringVal;
+  std::size_t pos;
+
+  if (type != T_STRING) throw_("requesting string from non-string jsonValue");
+ 
+  pos =0;
+  while ((pos=s.find("\\",pos+1)) != std::string::npos) {
+    s = s.replace(pos,1,"\\\\");
+    pos += 2;
+  }
+  pos =0;
+  while ((pos=s.find("\"",pos+1)) != std::string::npos) {
+    s = s.replace(pos,1,"\\\"");
+    pos += 2;
+  }
+  
+  return s;
 
 }
 
