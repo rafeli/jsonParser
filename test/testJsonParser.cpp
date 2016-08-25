@@ -46,7 +46,7 @@ void TestJsonParser::testParseString() {
   // -2- just a string
   try {
     actual_.str("");
-    expected_ = "\'12abc34\'";
+    expected_ = "\"12abc34\"";
     testString = "\"12abc34\"";
     driver.parse(testString);
     actual_ << driver.result; 
@@ -59,7 +59,7 @@ void TestJsonParser::testParseString() {
   // -2a- single quoted string
   try {
     actual_.str("");
-    expected_= testString =  "\'12abc34\'";
+    expected_= testString =  "\"12abc34\"";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
@@ -71,7 +71,7 @@ void TestJsonParser::testParseString() {
   // -2c- string with \t and \n
   try {
     actual_.str("");
-    expected_= testString =  "\'12\tabc\n34\'";
+    testString =   expected_=    "\"12\tabc\n34\"";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
@@ -97,7 +97,7 @@ void TestJsonParser::testParseString() {
   test_ = "parseArray";
   try {
     actual_.str("");
-    expected_=  testString = "[12, 'abcdef', 1.078000e+00]";
+    expected_=  testString = "[12, \"abcdef\", 1.078000e+00]";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 

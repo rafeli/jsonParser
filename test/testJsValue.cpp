@@ -37,7 +37,7 @@ void TestJsValue::testInt(){
 
     // -1-   test  
     actual_.str("");
-    expected_ = "\'abcd\'17";
+    expected_ = "\"abcd\"17";
     actual_ <<  stringVal << intVal ;
     TestTools::report(actual_.str(), expected_, test_);
 
@@ -68,13 +68,13 @@ void TestJsValue::testArray(){
 
     // -1-   test read JSON Array 
     actual_.str("");
-    expected_ = "[17, \'abcd\']";
+    expected_ = "[17, \"abcd\"]";
     actual_ <<  arrayVal ;
     TestTools::report(actual_.str(), expected_, test_);
 
     // -2- test read CPP Array into JSON
     actual_.str("");
-    expected_ = "[\'aaa\', \'bbb\'][17, -129][-1.000000e+00, 1.414230e+00]";
+    expected_ = "[\"aaa\", \"bbb\"][17, -129][-1.000000e+00, 1.414230e+00]";
     std::vector<std::string> stringVector;
     std::vector<int> intVector;
     std::vector<double> dblVector;
@@ -126,7 +126,7 @@ void TestJsValue::testObject(){
 
     // -1-   test  
     actual_.str("");
-    expected_ = "{myDouble:1.170000e+03, myInt:17, myString:'abcd', myVector:[17, 'abcd', 1.170000e+03]}";
+    expected_ = "{\"myDouble\":1.170000e+03, \"myInt\":17, \"myString\":\"abcd\", \"myVector\":[17, \"abcd\", 1.170000e+03]}";
     actual_ <<  myObject ;
     TestTools::report(actual_.str(), expected_, test_);
 

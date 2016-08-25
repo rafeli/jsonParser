@@ -49,3 +49,17 @@ jsObject getJSONObject(const std::string& m) {
   }
 
 }
+
+jsValue getJSONValue(const std::string& m) {
+  try {
+    calcxx_driver driver;
+    driver.parse(m);
+    return driver.result;
+  } catch (std::string e) {
+    throw std::string(" reading JSON Object from String:" + e );
+  }
+
+}
+
+
+// hier war ich: getJSValue ist noch einfacher to schreiben !!

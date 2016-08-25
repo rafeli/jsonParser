@@ -36,5 +36,6 @@ public:
 
 // added 2016-04-15: easier to use
 jsObject getJSONObject(const std::string&);
+jsValue getJSONValue(const std::string&);
 
 #endif // ! CALCXX_DRIVER_HH
