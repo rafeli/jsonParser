@@ -57,10 +57,16 @@ jsValue::jsValue() {
   init();
 }
 
-jsValue::jsValue(const int &v) {
+jsValue::jsValue(const long &v) {
   init();
   type = T_INT;
   intVal = v;
+}
+
+jsValue::jsValue(const int &v) {
+  init();
+  type = T_INT;
+  intVal = (long) v;
 }
 
 jsValue::jsValue(const double &v) {
@@ -108,8 +114,9 @@ jsValue::jsValue(std::vector<double> &v) {
     arrayVal.push_back(e);
   }
 }
+
  
-jsValue::jsValue(std::vector<int> &v) {
+jsValue::jsValue(std::vector<long> &v) {
   init();
   type = T_ARRAY;
   arrayVal.clear();

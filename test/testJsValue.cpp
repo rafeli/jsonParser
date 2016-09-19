@@ -96,7 +96,7 @@ void TestJsValue::testString(){
 
 void TestJsValue::testInt(){
 
-  jsValue intVal(17),
+  jsValue intVal( 17),
           stringVal("abcd");
 
   try{
@@ -147,7 +147,7 @@ void TestJsValue::testArray(){
     actual_.str("");
     expected_ = "[\"aaa\", \"bbb\"][17, -129][-1.000000e+00, 1.414230e+00]";
     std::vector<std::string> stringVector;
-    std::vector<int> intVector;
+    std::vector<long> intVector;
     std::vector<double> dblVector;
     stringVector.push_back("aaa");
     stringVector.push_back("bbb");

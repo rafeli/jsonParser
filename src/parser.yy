@@ -37,7 +37,7 @@ class calcxx_driver;
   COMMA        ","
 ;
 %token <std::string> IDENTIFIER "identifier"
-%token <int> NUMBER_I 
+%token <long> NUMBER_I 
 %token <double> NUMBER_F 
 %token <std::string> STRING 
 %type  <jsValue> jsonexp

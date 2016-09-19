@@ -22,7 +22,7 @@ class jsValue {
 
   int type;
 
-  int intVal; 
+  long intVal; 
 
   double dblVal; 
 
@@ -38,6 +38,7 @@ class jsValue {
 
   jsValue(); // TODO: is this needed ???
 
+  jsValue(const long &);
   jsValue(const int &);
 
   jsValue(const double &);
@@ -51,7 +52,7 @@ class jsValue {
   // following  not needed for parsing, added 2016 to allow stringify
   jsValue(std::vector<std::string> &);
   jsValue(std::vector<double> &);
-  jsValue(std::vector<int> &);
+  jsValue(std::vector<long> &);
   std::string stringify();
 
   void add(jsValue); // add to array
