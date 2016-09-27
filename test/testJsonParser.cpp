@@ -69,16 +69,18 @@ void TestJsonParser::testParseString() {
   }
 
   // -2c- string with \t and \n
+  //     changed to \\t and \\n, as these chars are encoded in JSON
   try {
-    actual_.str("");
-    testString =   expected_=    "\"12\tabc\n34\"";
+    testString =     "\"12\\tabc\\n3412 \\\" tabc \"";
+    expected_=    "12\tabc\n34";
     driver.parse(testString);
-    actual_ << driver.result; 
-    TestTools::report(actual_.str(), expected_, test_); 
+    TestTools::report(driver.result.getString(), expected_, test_); 
     MYLOG(DEBUG,"Test Single Quoted String complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
+
+
 
   // -2- just a double
   test_ = "parseDouble";

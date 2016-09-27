@@ -75,11 +75,30 @@ jsValue::jsValue(const double &v) {
   dblVal = v;
 }
 
- jsValue::jsValue(const std::string &s) {
+jsValue::jsValue(const std::string &s, bool encoded) {
    init();
    type = T_STRING;
    stringVal = s;
- }
+
+  // decode value if it was encoded
+  // this is a non-understood HACK: while parsing bison/flex
+  // seem to already decode \\ to \ and \" to "
+  // but not (?) \\n to \n
+  if (encoded) {
+    std::size_t pos;
+
+    pos =0;
+    while ((pos=stringVal.find("\\n",pos+1)) != std::string::npos) {
+      stringVal = stringVal.replace(pos,2,"\n");
+      pos += 1;
+    }
+    pos =0;
+    while ((pos=stringVal.find("\\t",pos+1)) != std::string::npos) {
+      stringVal = stringVal.replace(pos,2,"\t");
+      pos += 1;
+    }
+  }
+}
  
 jsValue::jsValue(std::vector<jsValue> &&v) {
   init();
@@ -169,6 +188,11 @@ std::string jsValue::getEncodedString() const {
   pos =0;
   while ((pos=s.find("\"",pos+1)) != std::string::npos) {
     s = s.replace(pos,1,"\\\"");
+    pos += 2;
+  }
+  pos =0;
+  while ((pos=s.find("\n",pos+1)) != std::string::npos) {
+    s = s.replace(pos,1,"\\n");
     pos += 2;
   }
   

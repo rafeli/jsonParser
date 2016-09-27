@@ -43,7 +43,7 @@ class jsValue {
 
   jsValue(const double &);
 
-  jsValue(const std::string &);
+  jsValue(const std::string &, bool encoded = false);
  
   jsValue(std::vector<jsValue> &&);
 

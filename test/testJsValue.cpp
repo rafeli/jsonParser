@@ -27,14 +27,16 @@ void TestJsValue::testAll(){
 
 void TestJsValue::testString(){
 
-  std::string plain="abcd",                                //  abcd
+  std::string plain="ab@cd",                               //  abcd
           quote="ein \" quote",                            //  ein " quote
           escQuote="escaped \\\" quote",                   //  escaped \" quote
-          plainJSON = "\"abcd\"",                          //  "abcd"
+          linebreak = "ab\ncd",                            //  escaped linebreak
+          plainJSON = "\"ab@cd\"",                          //  "abcd"
+          linebreakJSON = "\"ab\\ncd\"",                   //  "ab\ncd"
           quoteJSON = "\"ein \\\" quote\"",                //  "ein \" quote"
           escQuoteJSON = "\"escaped \\\\\\\" quote\"";     //  "escaped \\\" quote"
 
-  jsValue jsPlain(plain), jsQuote(quote), jsEscQuote(escQuote);
+  jsValue jsPlain(plain), jsQuote(quote), jsEscQuote(escQuote), jsLineBreak(linebreak);
 
   try{
     std::stringstream actual_;
@@ -48,21 +50,24 @@ void TestJsValue::testString(){
     TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(plain string).stringify()");
     TestTools::report(jsQuote.stringify(), quoteJSON, "jsValue(string w. double quote).stringify()");
     TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(string w. escape).stringify()");
+    TestTools::report(jsLineBreak.stringify(), linebreakJSON, "jsValue(string w. \\n).stringify()");
 
     // -2- getString should give original string 
     TestTools::report(jsPlain.getString(), plain, "jsValue(plain string).getString()");
     TestTools::report(jsQuote.getString(), quote, "jsValue(string w. double quote).getString()");
     TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(string w. escape).getString()");
+    TestTools::report(jsLineBreak.getString(), linebreak, "jsValue(string w \\n).getString()");
 
-    // -3- same should work with getJSONValue, but this takes a JSON-string,
-    //     i.e. outer double quotes must be contained
+    // -3- same should work with getJSONValue
     TestTools::report(getJSONValue(plainJSON).stringify(), plainJSON, "getJSONValue(plain string)");
     TestTools::report(getJSONValue(quoteJSON).stringify(), quoteJSON, "getJSONValue(quote)");
     TestTools::report(getJSONValue(escQuoteJSON).stringify(), escQuoteJSON, "getJSONValue(escaped quote)");
+    TestTools::report(getJSONValue(linebreakJSON).stringify(), linebreakJSON, "getJSONValue(string w. \\n)");
 
     TestTools::report(getJSONValue(plainJSON).getString(), plain, "getJSONValue(plain string)");
     TestTools::report(getJSONValue(quoteJSON).getString(), quote, "getJSONValue(quote)");
     TestTools::report(getJSONValue(escQuoteJSON).getString(), escQuote, "getJSONValue(escaped quote)");
+    TestTools::report(getJSONValue(linebreakJSON).getString(), linebreak, "getJSONValue(string w \\n)");
 
     // -4- tests on incorrect strings
     try {

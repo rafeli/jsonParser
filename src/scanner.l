@@ -21,7 +21,7 @@ static yy::location loc;
 // read closing double quotes
 %}
 %option noyywrap nounput batch debug noinput
-doubleQuotedString   \"(\\\"|[^\"])*\"
+doubleQuotedString   \"(\\\"|[^"])*\"
 singleQuotedString   \'[^\"]*\'
 id    [a-zA-Z][a-zA-Z_0-9]*
 int   [-+]?[0-9]+
