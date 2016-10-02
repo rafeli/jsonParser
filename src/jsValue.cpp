@@ -38,7 +38,7 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
    return os;
  }
 
-std::string jsValue::stringify() {
+std::string jsValue::stringify() const{
   std::stringstream ss;
   ss.str("");
   ss << (*this); 

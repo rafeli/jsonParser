@@ -53,7 +53,7 @@ class jsValue {
   jsValue(std::vector<std::string> &);
   jsValue(std::vector<double> &);
   jsValue(std::vector<long> &);
-  std::string stringify();
+  std::string stringify() const;
 
   void add(jsValue); // add to array
 

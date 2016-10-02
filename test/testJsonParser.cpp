@@ -71,7 +71,7 @@ void TestJsonParser::testParseString() {
   // -2c- string with \t and \n
   //     changed to \\t and \\n, as these chars are encoded in JSON
   try {
-    testString =     "\"12\\tabc\\n3412 \\\" tabc \"";
+    testString =     "\"12\\tabc\\n34\"";
     expected_=    "12\tabc\n34";
     driver.parse(testString);
     TestTools::report(driver.result.getString(), expected_, test_); 
