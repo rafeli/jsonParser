@@ -116,5 +116,6 @@ void
 yy::calcxx_parser::error (const location_type& l,
                           const std::string& m)
 {
-  driver.error (l, m);
+  throw std::string ("parsing JSON: ")  + m;
+//  driver.error (l, m);
 }

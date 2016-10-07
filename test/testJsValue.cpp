@@ -316,6 +316,7 @@ int TestJsValue::testConstructors(){
     o.add("x",jsValue(a));
     jsValue x(o), *y = new jsValue(o), z = jsValue(o);
 
+    // TODO: implement == for jsValue and jsObject
     if (x.getObject().get("x").getDbl()==a) {
        TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
     } else {

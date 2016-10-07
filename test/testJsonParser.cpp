@@ -135,6 +135,18 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
+  // -6- non-JSON string
+  //     (havent invested much time in error messages from bison)
+  try {
+    actual_.str("");
+    expected_= testString = "abc";
+    driver.parse(testString);
+    actual_ << driver.result; 
+    TestTools::report("not OK", "", "syntax error not recognized"); 
+  } catch (std::string s) {
+    TestTools::report(s, "parsing JSON: syntax error, unexpected identifier", "no JSON: parse(\"abc\")"); 
+  }
+
   // ?? exit
   MYLOG(DEBUG,"EXIT");
 }
