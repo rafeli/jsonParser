@@ -147,6 +147,16 @@ void TestJsonParser::testParseString() {
     TestTools::report(s, "parsing JSON: syntax error, unexpected identifier", "no JSON: parse(\"abc\")"); 
   }
 
+  try {
+    actual_.str("");
+    expected_= testString = "[-xyz, nan]";
+    driver.parse(testString);
+    actual_ << driver.result; 
+    TestTools::report("not OK", "", "syntax error not recognized"); 
+  } catch (std::string s) {
+    TestTools::report(s, "parsing JSON: syntax error, unexpected identifier, expecting NUMBER_I or NUMBER_F", "no JSON: parse([-xyz])"); 
+  }
+
   // ?? exit
   MYLOG(DEBUG,"EXIT");
 }

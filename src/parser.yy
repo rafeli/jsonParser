@@ -35,6 +35,7 @@ class calcxx_driver;
   ARRAYCLOSE   "]"
   COLON        ":"
   COMMA        ","
+  MINUS        "-"
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <long> NUMBER_I 
@@ -50,14 +51,18 @@ class calcxx_driver;
 %start jsonexp;
 
 %%
-
-// following works but less preferred because dynamic allocation by-hand:
-//  {$$ = *(new jsValue($1)); }
+// a -123 is read as MINUS 123. This would also be read
+// correctly without defining MINUS, but the problem is
+// [-xyz], which is an error, but not recognized as such,
+// with parser trying to read -xyz as an int, leading to invalid-argument
+// exception in stod()
 
 jsonexp : jsvalue {driver.result =std::move($1);};
 
 jsvalue : NUMBER_I    {$$ = *(new jsValue($1));}
+        | MINUS NUMBER_I    {$$ = *(new jsValue(-1*$2));}
         | NUMBER_F    {jsValue v($1); $$ = std::move(v); }
+        | MINUS NUMBER_F    {jsValue v(-1*$2); $$ = std::move(v); }
         | STRING      {
             std::string s =$1.substr(1,$1.size()-2);
             jsValue v(s, true);  // true = decode from JSON (e.g. \\n to \n)

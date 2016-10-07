@@ -48,6 +48,7 @@ blank [ \t]
 "]"        return yy::calcxx_parser::make_ARRAYCLOSE(loc);
 ":"        return yy::calcxx_parser::make_COLON(loc);
 ","        return yy::calcxx_parser::make_COMMA(loc);
+"-"        return yy::calcxx_parser::make_MINUS(loc);
 
 {int}      {
   errno = 0;
