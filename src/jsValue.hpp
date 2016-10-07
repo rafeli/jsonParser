@@ -45,9 +45,13 @@ class jsValue {
 
   jsValue(const std::string &, bool encoded = false);
  
-  jsValue(std::vector<jsValue> &&);
+  jsValue(std::vector<jsValue> &);
+// the following allowed e.g. jsValue x = y; with y a std::vector<jsValue>
+// without we now need: jsValule x = jsValue(y); which is clearer to me
+//  jsValue(std::vector<jsValue> &&);
 
-  jsValue(jsObject &&);
+
+  jsValue(jsObject &);
 
   // following  not needed for parsing, added 2016 to allow stringify
   jsValue(std::vector<std::string> &);

@@ -88,25 +88,31 @@ jsValue::jsValue(const std::string &s, bool encoded) {
     std::size_t pos;
 
     pos =0;
-    while ((pos=stringVal.find("\\n",pos+1)) != std::string::npos) {
+    while ((pos=stringVal.find("\\n",pos)) != std::string::npos) {
       stringVal = stringVal.replace(pos,2,"\n");
       pos += 1;
     }
     pos =0;
-    while ((pos=stringVal.find("\\t",pos+1)) != std::string::npos) {
+    while ((pos=stringVal.find("\\t",pos)) != std::string::npos) {
       stringVal = stringVal.replace(pos,2,"\t");
       pos += 1;
     }
   }
 }
  
-jsValue::jsValue(std::vector<jsValue> &&v) {
+jsValue::jsValue(std::vector<jsValue> &v) {
   init();
   type = T_ARRAY;
   arrayVal = v;
 }
 
-jsValue::jsValue(jsObject &&x) {
+//jsValue::jsValue(std::vector<jsValue> &&v) {
+//  init();
+//  type = T_ARRAY;
+//  arrayVal = v;
+//}
+
+jsValue::jsValue(jsObject &x) {
   init();
   type = T_OBJECT;
   objectVal = x;
@@ -119,8 +125,8 @@ jsValue::jsValue(std::vector<std::string> &v) {
   type = T_ARRAY;
   arrayVal.clear();
   for (unsigned int i=0; i<v.size(); i++) {
-    jsValue e(v[i]);
-    arrayVal.push_back(e);
+//    jsValue e(v[i]);
+    arrayVal.push_back(jsValue(v[i]));
   }
 }
 
@@ -129,8 +135,8 @@ jsValue::jsValue(std::vector<double> &v) {
   type = T_ARRAY;
   arrayVal.clear();
   for (unsigned int i=0; i<v.size(); i++) {
-    jsValue e(v[i]);
-    arrayVal.push_back(e);
+//    jsValue e(v[i]);
+    arrayVal.push_back(jsValue(v[i]));
   }
 }
 
@@ -140,8 +146,8 @@ jsValue::jsValue(std::vector<long> &v) {
   type = T_ARRAY;
   arrayVal.clear();
   for (unsigned int i=0; i<v.size(); i++) {
-    jsValue e(v[i]);
-    arrayVal.push_back(e);
+//    jsValue e(v[i]);
+    arrayVal.push_back(jsValue(v[i]));
   }
 }
 

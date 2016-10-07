@@ -12,7 +12,8 @@ TestJsValue::TestJsValue(){
 
 TestJsValue::~TestJsValue(){}
 
-void TestJsValue::testAll(){
+int TestJsValue::testAll(){
+  int numTests = 0;
 
   testInt();
 
@@ -22,6 +23,9 @@ void TestJsValue::testAll(){
 
   testString();
 
+  numTests += testConstructors();
+
+  return numTests;
 }
 
 
@@ -140,7 +144,8 @@ void TestJsValue::testArray(){
     myVector.clear();
     myVector.push_back(intVal);
     myVector.push_back(stringVal);
-    jsValue arrayVal(std::move(myVector)); // 2016: was macht move noch mal ???
+    jsValue arrayVal((myVector)); // 2016: was macht move noch mal ???
+//    jsValue arrayVal(std::move(myVector)); // 2016: was macht move noch mal ???
 
     // -1-   test read JSON Array 
     actual_.str("");
@@ -193,7 +198,8 @@ void TestJsValue::testObject(){
     myVector.push_back(intVal);
     myVector.push_back(stringVal);
     myVector.push_back(dblVal);
-    jsValue arrayVal(std::move(myVector));
+//    jsValue arrayVal(std::move(myVector));
+    jsValue arrayVal((myVector));
     myObject.add("myInt", intVal);
     myObject.add("myString", stringVal);
     myObject.add("myDouble", dblVal);
@@ -214,3 +220,113 @@ void TestJsValue::testObject(){
   }
 }
 
+int TestJsValue::testConstructors(){
+
+  // -1- construct from int
+  try {
+    int a=17, b=-3, c=0;
+    jsValue x(a), *y = new jsValue(b), z = jsValue(c);
+
+    if (x.getInt() == a && y->getInt()==b && z.getInt() == c) {
+       TestTools::report("ok", "ok" , "jsValue(int)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(int)");
+    }
+  } catch (std::string e) {
+    TestTools::report("Error:", e , "jsValue(int)");
+  }
+
+  // -2- construct from string
+  try {
+    std::string a="aa", b="C\"", c="";
+    jsValue x(a), *y = new jsValue(b), z = jsValue(c);
+
+    if (x.getString() == a && y->getString()==b && z.getString() == c) {
+       TestTools::report("ok", "ok" , "jsValue(string)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(string)");
+    }
+  } catch (std::string e) {
+    TestTools::report("Error:", e , "jsValue(string)");
+  }
+
+  // -3- construct from double
+  try {
+    double a=0.4, b=-1.789E-99, c=0;
+    jsValue x(a), *y = new jsValue(b), z = jsValue(c);
+
+    if (x.getDbl() == a && y->getDbl()==b && z.getDbl() == c) {
+       TestTools::report("ok", "ok" , "jsValue(double)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(double)");
+    }
+  } catch (std::string e) {
+    TestTools::report("Error:", e , "jsValue(double)");
+  }
+
+  // -4- construct from std::vector<double>
+  try {
+    double a=0.4, b=-1.789E-19, c=0;
+    std::vector<double> myVector = {a,b,c};
+    jsValue x(myVector), *y = new jsValue(myVector), z = jsValue(myVector);
+
+    if (x.getArray()[0].getDbl()==a && y->getArray()[1].getDbl()==b && z.getArray()[2].getDbl()==c) {
+       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+    }
+  } catch (std::string e) {
+    TestTools::report("Error:", e , "jsValue(std::vector<double>)");
+  }
+
+  // -5- construct from std::vector<string>
+  try {
+    std::string a="aa", b="C\"", c="";
+    std::vector<std::string> myVector = {a,b,c};
+    jsValue x(myVector), *y = new jsValue(myVector), z = jsValue(myVector);
+
+    if (x.getArray()[0].getString()==a && y->getArray()[1].getString()==b && z.getArray()[2].getString()==c) {
+       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+    }
+  } catch (std::string e) {
+    TestTools::report("Error:", e , "jsValue(std::vector<double>)");
+  }
+
+  // -6- construct from std::vector<jsValue>
+  try {
+    double a=0.4, b=-1.789E-19, c=0;
+    std::vector<jsValue> myVector = {jsValue(a),jsValue(b),jsValue(c)};
+    jsValue x(myVector), *y = new jsValue(myVector), z = jsValue(myVector);
+
+    if (x.getArray()[0].getDbl()==a && y->getArray()[1].getDbl()==b && z.getArray()[2].getDbl()==c) {
+       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+    }
+  } catch (std::string e) {
+    TestTools::report("Error:", e , "jsValue(std::vector<double>)");
+  }
+
+  // -7- construct from jsObject
+  try {
+    jsObject o;
+    double a= -1.789E-19;
+    o.add("x",jsValue(a));
+    jsValue x(o), *y = new jsValue(o), z = jsValue(o);
+
+    if (x.getObject().get("x").getDbl()==a) {
+       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+    }
+  } catch (std::string e) {
+    TestTools::report("Error:", e , "jsValue(std::vector<double>)");
+  }
+
+  
+
+
+  return 15; 
+}

@@ -17,7 +17,7 @@ public:
 
   ~TestJsValue();
 
-  void testAll();
+  int testAll();
 
   void testInt();
 
@@ -28,6 +28,8 @@ public:
   void testArray();
 
   void testObject();
+
+  int testConstructors();
 
 
 };

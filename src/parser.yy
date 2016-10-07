@@ -68,14 +68,16 @@ jsvalue : NUMBER_I    {$$ = *(new jsValue($1));}
 
 jsarray : %empty   { 
                       std::vector<jsValue> stdVector;
-                      jsValue jsArray(std::move(stdVector));
+//                      jsValue jsArray(std::move(stdVector));
+                      jsValue jsArray((stdVector));
                       $$ = std::move(jsArray);
                    }
         | jsvalue  {
                       std::vector<jsValue> stdVector;
                       jsValue oneValue($1); 
                       stdVector.push_back(std::move(oneValue));
-                      jsValue jsArray (std::move(stdVector));
+//                      jsValue jsArray (std::move(stdVector));
+                      jsValue jsArray ((stdVector));
                       $$ = std::move(jsArray);
                     }
         | jsarray COMMA jsvalue  {
@@ -84,13 +86,15 @@ jsarray : %empty   {
 
 jsobject : %empty  {
                       jsObject object_;
-                      jsValue jsObject_(std::move(object_));
+//                      jsValue jsObject_(std::move(object_));
+                      jsValue jsObject_((object_));
                       $$ = std::move(jsObject_);
                    }
          | STRING COLON jsvalue {
                       jsObject object_;
                       std::string key = $1.substr(1,$1.size()-2);
-                      jsValue jsObject_(std::move(object_));
+//                      jsValue jsObject_(std::move(object_));
+                      jsValue jsObject_((object_));
                       jsObject_.add(key,$3);
                       $$ = std::move(jsObject_);
                    }
