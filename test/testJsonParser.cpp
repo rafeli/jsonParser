@@ -46,7 +46,7 @@ void TestJsonParser::testParseString() {
   // -2- just a string
   try {
     actual_.str("");
-    expected_ = "\'12abc34\'";
+    expected_ = "\"12abc34\"";
     testString = "\"12abc34\"";
     driver.parse(testString);
     actual_ << driver.result; 
@@ -59,7 +59,7 @@ void TestJsonParser::testParseString() {
   // -2a- single quoted string
   try {
     actual_.str("");
-    expected_= testString =  "\'12abc34\'";
+    expected_= testString =  "\"12abc34\"";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
@@ -69,16 +69,18 @@ void TestJsonParser::testParseString() {
   }
 
   // -2c- string with \t and \n
+  //     changed to \\t and \\n, as these chars are encoded in JSON
   try {
-    actual_.str("");
-    expected_= testString =  "\'12\tabc\n34\'";
+    testString =     "\"12\\tabc\\n34\"";
+    expected_=    "12\tabc\n34";
     driver.parse(testString);
-    actual_ << driver.result; 
-    TestTools::report(actual_.str(), expected_, test_); 
+    TestTools::report(driver.result.getString(), expected_, test_); 
     MYLOG(DEBUG,"Test Single Quoted String complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
+
+
 
   // -2- just a double
   test_ = "parseDouble";
@@ -97,7 +99,7 @@ void TestJsonParser::testParseString() {
   test_ = "parseArray";
   try {
     actual_.str("");
-    expected_=  testString = "[12, 'abcdef', 1.078000e+00]";
+    expected_=  testString = "[12, \"abcdef\", 1.078000e+00]";
     driver.parse(testString);
     actual_ << driver.result; 
     TestTools::report(actual_.str(), expected_, test_); 
@@ -131,6 +133,28 @@ void TestJsonParser::testParseString() {
     TestTools::report(actual_.str(), expected_, test_); 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
+
+  // -6- non-JSON string
+  //     (havent invested much time in error messages from bison)
+  try {
+    actual_.str("");
+    expected_= testString = "abc";
+    driver.parse(testString);
+    actual_ << driver.result; 
+    TestTools::report("not OK", "", "syntax error not recognized"); 
+  } catch (std::string s) {
+    TestTools::report(s, "parsing JSON: syntax error, unexpected identifier", "no JSON: parse(\"abc\")"); 
+  }
+
+  try {
+    actual_.str("");
+    expected_= testString = "[-xyz, nan]";
+    driver.parse(testString);
+    actual_ << driver.result; 
+    TestTools::report("not OK", "", "syntax error not recognized"); 
+  } catch (std::string s) {
+    TestTools::report(s, "parsing JSON: syntax error, unexpected identifier, expecting NUMBER_I or NUMBER_F", "no JSON: parse([-xyz])"); 
   }
 
   // ?? exit

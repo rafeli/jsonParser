@@ -16,7 +16,7 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      os << std::scientific << x.getDbl();
      break;
    case T_STRING:
-     os << "\'" << x.getString() << "\'";
+     os << "\"" << x.getEncodedString() << "\"";
      break;
    case T_ARRAY:
      v = x.getArray();
@@ -38,6 +38,12 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
    return os;
  }
 
+std::string jsValue::stringify() const{
+  std::stringstream ss;
+  ss.str("");
+  ss << (*this); 
+  return ss.str();
+}
 
 void jsValue::init() {
 
@@ -51,10 +57,16 @@ jsValue::jsValue() {
   init();
 }
 
-jsValue::jsValue(const int &v) {
+jsValue::jsValue(const long &v) {
   init();
   type = T_INT;
   intVal = v;
+}
+
+jsValue::jsValue(const int &v) {
+  init();
+  type = T_INT;
+  intVal = (long) v;
 }
 
 jsValue::jsValue(const double &v) {
@@ -63,23 +75,83 @@ jsValue::jsValue(const double &v) {
   dblVal = v;
 }
 
- jsValue::jsValue(const std::string &s) {
+jsValue::jsValue(const std::string &s, bool encoded) {
    init();
    type = T_STRING;
    stringVal = s;
- }
+
+  // decode value if it was encoded
+  // this is a non-understood HACK: while parsing bison/flex
+  // seem to already decode \\ to \ and \" to "
+  // but not (?) \\n to \n
+  if (encoded) {
+    std::size_t pos;
+
+    pos =0;
+    while ((pos=stringVal.find("\\n",pos)) != std::string::npos) {
+      stringVal = stringVal.replace(pos,2,"\n");
+      pos += 1;
+    }
+    pos =0;
+    while ((pos=stringVal.find("\\t",pos)) != std::string::npos) {
+      stringVal = stringVal.replace(pos,2,"\t");
+      pos += 1;
+    }
+  }
+}
  
-jsValue::jsValue(std::vector<jsValue> &&v) {
+jsValue::jsValue(std::vector<jsValue> &v) {
   init();
   type = T_ARRAY;
   arrayVal = v;
 }
 
-jsValue::jsValue(jsObject &&x) {
+//jsValue::jsValue(std::vector<jsValue> &&v) {
+//  init();
+//  type = T_ARRAY;
+//  arrayVal = v;
+//}
+
+jsValue::jsValue(jsObject &x) {
   init();
   type = T_OBJECT;
   objectVal = x;
 }
+
+// new Constructors, not needed for parsing but for stringify
+// havent managed this with templates (linker doesnt find specific functions)
+jsValue::jsValue(std::vector<std::string> &v) {
+  init();
+  type = T_ARRAY;
+  arrayVal.clear();
+  for (unsigned int i=0; i<v.size(); i++) {
+//    jsValue e(v[i]);
+    arrayVal.push_back(jsValue(v[i]));
+  }
+}
+
+jsValue::jsValue(std::vector<double> &v) {
+  init();
+  type = T_ARRAY;
+  arrayVal.clear();
+  for (unsigned int i=0; i<v.size(); i++) {
+//    jsValue e(v[i]);
+    arrayVal.push_back(jsValue(v[i]));
+  }
+}
+
+ 
+jsValue::jsValue(std::vector<long> &v) {
+  init();
+  type = T_ARRAY;
+  arrayVal.clear();
+  for (unsigned int i=0; i<v.size(); i++) {
+//    jsValue e(v[i]);
+    arrayVal.push_back(jsValue(v[i]));
+  }
+}
+
+
 
 int jsValue::getType() const {
   return type;
@@ -104,6 +176,33 @@ std::string  jsValue::getString() const {
 
   if (type != T_STRING) throw_("requesting string from non-string jsonValue");
   return stringVal;
+
+}
+
+std::string jsValue::getEncodedString() const {
+
+  std::string s = stringVal;
+  std::size_t pos;
+
+  if (type != T_STRING) throw_("requesting string from non-string jsonValue");
+ 
+  pos =0;
+  while ((pos=s.find("\\",pos+1)) != std::string::npos) {
+    s = s.replace(pos,1,"\\\\");
+    pos += 2;
+  }
+  pos =0;
+  while ((pos=s.find("\"",pos+1)) != std::string::npos) {
+    s = s.replace(pos,1,"\\\"");
+    pos += 2;
+  }
+  pos =0;
+  while ((pos=s.find("\n",pos+1)) != std::string::npos) {
+    s = s.replace(pos,1,"\\n");
+    pos += 2;
+  }
+  
+  return s;
 
 }
 

@@ -7,7 +7,7 @@ std::ostream& operator<<(std::ostream& os, const jsObject& x) {
    // -1- stream depd. on type (recursive for array and object)
    os << "{" ;
    for (auto it=x.myValues.begin(); it!=x.myValues.end(); ++it) {
-    os << (it==x.myValues.begin() ? "" : ", ") << it->first << ":" << it->second;
+    os << (it==x.myValues.begin() ? "" : ", ") <<  "\"" << it->first <<  "\":" << it->second;
    }
    os << "}";
 

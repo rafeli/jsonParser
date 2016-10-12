@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <ostream>
+#include <sstream>
 
 #include "jsObject.hpp"
 
@@ -21,7 +22,7 @@ class jsValue {
 
   int type;
 
-  int intVal; 
+  long intVal; 
 
   double dblVal; 
 
@@ -35,17 +36,28 @@ class jsValue {
 
   public:
 
-  jsValue();
+  jsValue(); // TODO: is this needed ???
 
+  jsValue(const long &);
   jsValue(const int &);
 
   jsValue(const double &);
 
-  jsValue(const std::string &);
+  jsValue(const std::string &, bool encoded = false);
  
-  jsValue(std::vector<jsValue> &&);
+  jsValue(std::vector<jsValue> &);
+// the following allowed e.g. jsValue x = y; with y a std::vector<jsValue>
+// without we now need: jsValule x = jsValue(y); which is clearer to me
+//  jsValue(std::vector<jsValue> &&);
 
-  jsValue(jsObject &&);
+
+  jsValue(jsObject &);
+
+  // following  not needed for parsing, added 2016 to allow stringify
+  jsValue(std::vector<std::string> &);
+  jsValue(std::vector<double> &);
+  jsValue(std::vector<long> &);
+  std::string stringify() const;
 
   void add(jsValue); // add to array
 
@@ -61,7 +73,9 @@ class jsValue {
 
   jsObject getObject() const;
 
-  std::string  getString() const;
+  std::string getString() const;
+
+  std::string getEncodedString() const;
 
   // convenience:
   std::vector<double> getDblArray() const;

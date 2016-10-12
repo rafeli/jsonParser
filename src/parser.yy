@@ -33,13 +33,12 @@ class calcxx_driver;
   OBJECTCLOSE  "}"
   ARRAYOPEN    "["
   ARRAYCLOSE   "]"
-  QUOTE        "Double Quote"
-  SQUOTE       "'"
   COLON        ":"
   COMMA        ","
+  MINUS        "-"
 ;
 %token <std::string> IDENTIFIER "identifier"
-%token <int> NUMBER_I 
+%token <long> NUMBER_I 
 %token <double> NUMBER_F 
 %token <std::string> STRING 
 %type  <jsValue> jsonexp
@@ -52,29 +51,38 @@ class calcxx_driver;
 %start jsonexp;
 
 %%
-
-// following works but less preferred because dynamic allocation by-hand:
-//  {$$ = *(new jsValue($1)); }
+// a -123 is read as MINUS 123. This would also be read
+// correctly without defining MINUS, but the problem is
+// [-xyz], which is an error, but not recognized as such,
+// with parser trying to read -xyz as an int, leading to invalid-argument
+// exception in stod()
 
 jsonexp : jsvalue {driver.result =std::move($1);};
 
 jsvalue : NUMBER_I    {$$ = *(new jsValue($1));}
+        | MINUS NUMBER_I    {$$ = *(new jsValue(-1*$2));}
         | NUMBER_F    {jsValue v($1); $$ = std::move(v); }
-        | STRING      {jsValue v($1.substr(1,$1.size()-2)); $$ = std::move(v);}
+        | MINUS NUMBER_F    {jsValue v(-1*$2); $$ = std::move(v); }
+        | STRING      {
+            std::string s =$1.substr(1,$1.size()-2);
+            jsValue v(s, true);  // true = decode from JSON (e.g. \\n to \n)
+            $$ = std::move(v);}
         | ARRAYOPEN jsarray ARRAYCLOSE    {$$ = std::move($2);}
         | OBJECTOPEN jsobject OBJECTCLOSE {$$ = std::move($2);}
       ;
 
 jsarray : %empty   { 
                       std::vector<jsValue> stdVector;
-                      jsValue jsArray(std::move(stdVector));
+//                      jsValue jsArray(std::move(stdVector));
+                      jsValue jsArray((stdVector));
                       $$ = std::move(jsArray);
                    }
         | jsvalue  {
                       std::vector<jsValue> stdVector;
                       jsValue oneValue($1); 
                       stdVector.push_back(std::move(oneValue));
-                      jsValue jsArray (std::move(stdVector));
+//                      jsValue jsArray (std::move(stdVector));
+                      jsValue jsArray ((stdVector));
                       $$ = std::move(jsArray);
                     }
         | jsarray COMMA jsvalue  {
@@ -83,13 +91,15 @@ jsarray : %empty   {
 
 jsobject : %empty  {
                       jsObject object_;
-                      jsValue jsObject_(std::move(object_));
+//                      jsValue jsObject_(std::move(object_));
+                      jsValue jsObject_((object_));
                       $$ = std::move(jsObject_);
                    }
          | STRING COLON jsvalue {
                       jsObject object_;
                       std::string key = $1.substr(1,$1.size()-2);
-                      jsValue jsObject_(std::move(object_));
+//                      jsValue jsObject_(std::move(object_));
+                      jsValue jsObject_((object_));
                       jsObject_.add(key,$3);
                       $$ = std::move(jsObject_);
                    }
@@ -111,5 +121,6 @@ void
 yy::calcxx_parser::error (const location_type& l,
                           const std::string& m)
 {
-  driver.error (l, m);
+  throw std::string ("parsing JSON: ")  + m;
+//  driver.error (l, m);
 }

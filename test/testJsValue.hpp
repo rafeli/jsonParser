@@ -4,6 +4,7 @@
 #include "testTools.hpp"
 #include "momo/logging.hpp"
 #include "../src/jsValue.hpp"
+#include "../src/json.hpp"
 
 class TestJsValue {
 
@@ -16,7 +17,7 @@ public:
 
   ~TestJsValue();
 
-  void testAll();
+  int testAll();
 
   void testInt();
 
@@ -27,6 +28,8 @@ public:
   void testArray();
 
   void testObject();
+
+  int testConstructors();
 
 
 };
