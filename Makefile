@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -Wall -g -std=c++0x
 LFLAGS = -L ~/local/lib
 INCLUDES = -I ~/local/include
-BISON = ~/local/bin/bison
+BISON = bison # ~/local/bin/bison
 
 
 TESTSRCS := $(wildcard test/*.cpp)
@@ -45,4 +45,5 @@ src/jsObject.o: src/jsObject.cpp src/jsObject.hpp
 
 
 clean:
-	cd src; rm *.o;  rm *.tab.* stack.hh location.hh position.hh scanner.cpp
+	cd src; rm -f *.o;  rm -f *.tab.* *.swp stack.hh location.hh position.hh scanner.cpp;
+	cd test; rm -f *.o;
