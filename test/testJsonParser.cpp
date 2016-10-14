@@ -121,7 +121,7 @@ int TestJsonParser::testParseString() {
   try {
     testString = "17.0500";
     driver.parse(testString);
-    TestTools::report(driver.result.stringify(), "1.71e+01", test_); 
+    TestTools::report(driver.result.stringify(), "1.70500e+01", test_); 
     MYLOG(DEBUG,"Test double complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;

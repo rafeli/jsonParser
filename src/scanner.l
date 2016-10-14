@@ -26,8 +26,8 @@ doubleQuotedString   \"(\\\"|[^"])*\"
 singleQuotedString   \'[^\"]*\'
 id    [a-zA-Z][a-zA-Z_0-9]*
 int   [+]?[0-9]+
-dblE   [0-9]\.?[0-9]*([eE][-+]?[0-9][0-9])
-dblF   [0-9]*\.?[0-9]*
+dblE   [0-9]\.[0-9]*([eE][-+]?[0-9][0-9])
+dblF   [0-9]*\.[0-9]*
 dblS   [+]?[0-9]*\.?[0-9]*[eE][-+]?[0-9]+
 blank [ \t]
 
@@ -69,7 +69,8 @@ blank [ \t]
 {dblF}      {
   // double fixed format: convert to scientific with standard precision 
   std::stringstream ss("");
-  ss.precision(LOWPRECISION);
+  std::size_t pos = std::string(yytext).find(".");
+  ss.precision(strlen(yytext) - pos);
   ss << std::scientific << std::stod (yytext, NULL);
   return yy::calcxx_parser::make_NUMBER_F(ss.str(), loc);
 }
