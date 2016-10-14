@@ -19,15 +19,15 @@ public:
 
   int testAll();
 
-  void testInt();
+  int testInt();
 
-  void testString();
+  int testString();
 
-  void testDouble();
+  int testDouble();
 
-  void testArray();
+  int testArray();
 
-  void testObject();
+  int testObject();
 
   int testConstructors();
 

@@ -15,14 +15,18 @@ TestJsonParser::TestJsonParser(){
 
 TestJsonParser::~TestJsonParser(){}
 
-void TestJsonParser::testAll(){
+int TestJsonParser::testAll(){
 
-  testParseString();
+  int numTests = 0;
+
+  numTests += testParseString();
+
+  return numTests;
 
 }
 
 
-void TestJsonParser::testParseString() {
+int TestJsonParser::testParseString() {
   std::stringstream actual_;
   std::string test_ = "parseString",
           expected_ = "",
@@ -31,19 +35,27 @@ void TestJsonParser::testParseString() {
   // -0- Entering
   MYLOG(DEBUG,"ENTER");
 
-  // -1- just an int
+  // -1- int positive and negative
+  test_ = "positive integer";
   try {
-    actual_.str("");
-    expected_= testString = "12345";
+    testString = "12345";
     driver.parse(testString);
-    actual_ << driver.result; 
-    TestTools::report(actual_.str(), expected_, test_); 
-    MYLOG(DEBUG,"Test int complete");
+    TestTools::report(driver.result.stringify(), testString, test_); 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s;
   }
 
-  // -2- just a string
+  // -2- negative int
+  test_ = "negative integer";
+  try {
+    testString = "-11";
+    driver.parse(testString);
+    TestTools::report(driver.result.stringify(), testString, test_); 
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s;
+  }
+
+  // -3- just a string
   try {
     actual_.str("");
     expected_ = "\"12abc34\"";
@@ -56,7 +68,7 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-  // -2a- single quoted string
+  // -4- single quoted string
   try {
     actual_.str("");
     expected_= testString =  "\"12abc34\"";
@@ -68,7 +80,7 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-  // -2c- string with \t and \n
+  // -5- string with \t and \n
   //     changed to \\t and \\n, as these chars are encoded in JSON
   try {
     testString =     "\"12\\tabc\\n34\"";
@@ -82,21 +94,51 @@ void TestJsonParser::testParseString() {
 
 
 
-  // -2- just a double: precision is set to default = LOWPRECISION
-  //     TODO: set precision based on string !!
-  test_ = "parseDouble";
+  // -6- double in scientific format
+  test_ = "parseDouble scientific format";
   try {
     actual_.str("");
-    expected_=  testString = "6.022300e-23";
+    testString = "6.022300e-23";
     driver.parse(testString);
-    actual_ << driver.result; 
-    TestTools::report(actual_.str(), "6.02e-23", test_); 
+    TestTools::report(driver.result.stringify(), testString, test_); 
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
+
+  // -7- double in scientific format
+  test_ = "parseDouble negative ";
+  try {
+    actual_.str("");
+    testString = "-6.022300e+23";
+    driver.parse(testString);
+    TestTools::report(driver.result.stringify(), testString, test_); 
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
+
+  // -8- double in fixed format: precision set to LOWPRECISION = 2
+  test_ = "parseDouble fixed format";
+  try {
+    testString = "17.0500";
+    driver.parse(testString);
+    TestTools::report(driver.result.stringify(), "1.71e+01", test_); 
     MYLOG(DEBUG,"Test double complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-  // -3- a simple array
+  // -9- double in non-standard format: precision set to LOWPRECISION = 2
+  test_ = "parseDouble non-standard format";
+  try {
+    testString = "16.000e-3";
+    driver.parse(testString);
+    TestTools::report(driver.result.stringify(), "1.60e-02", test_); 
+    MYLOG(DEBUG,"Test double complete");
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
+
+  // -10 a simple array
   test_ = "parseArray";
   try {
     actual_.str("");
@@ -108,7 +150,7 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-  // -4- a simple object
+  // -11- a simple object
   test_ = "parseObject";
   try {
     actual_.str("");
@@ -123,7 +165,7 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-  // -5- a simple object
+  // -12- a simple object
   try {
     actual_.str("");
     expected_= testString = "{\"myInt\" : 12, \"myArray\" : [12, \"abc\"]}";
@@ -136,7 +178,7 @@ void TestJsonParser::testParseString() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-  // -6- non-JSON string
+  // -13- non-JSON string
   //     (havent invested much time in error messages from bison)
   try {
     actual_.str("");
@@ -160,4 +202,5 @@ void TestJsonParser::testParseString() {
 
   // ?? exit
   MYLOG(DEBUG,"EXIT");
+  return 13;
 }

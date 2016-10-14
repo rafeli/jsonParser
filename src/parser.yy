@@ -39,7 +39,7 @@ class calcxx_driver;
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <long> NUMBER_I 
-%token <double> NUMBER_F 
+%token <std::string> NUMBER_F 
 %token <std::string> STRING 
 %type  <jsValue> jsonexp
 %type  <jsValue> jsvalue
@@ -61,8 +61,19 @@ jsonexp : jsvalue {driver.result =std::move($1);};
 
 jsvalue : NUMBER_I    {$$ = *(new jsValue($1));}
         | MINUS NUMBER_I    {$$ = *(new jsValue(-1*$2));}
-        | NUMBER_F    {jsValue v($1); $$ = std::move(v); }
-        | MINUS NUMBER_F    {jsValue v(-1*$2); $$ = std::move(v); }
+        | NUMBER_F    {  // convert string to double to jsValue,
+                         // determine precision = $1.length() - 6
+                         // based on assumption scientific notation 
+                         $$ = std::move(jsValue(std::stod($1,NULL),$1.length() - 6));
+                      }
+        | MINUS NUMBER_F {  
+                         // we parse -123  as MINUS 123. This would also be read
+                         // correctly without defining MINUS, but the problem is
+                         // [-xyz], which is an error, but not recognized as such,
+                         // with parser trying to read -xyz as an int, leading to invalid-argument
+                         // exception in stod()
+                         $$ = std::move(jsValue(-1*std::stod($2,NULL), $2.length()-6)); 
+                      }
         | STRING      {
             std::string s =$1.substr(1,$1.size()-2);
             jsValue v(s, true);  // true = decode from JSON (e.g. \\n to \n)
