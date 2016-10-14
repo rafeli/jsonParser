@@ -13,6 +13,7 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      os << x.getInt();
      break;
    case T_DOUBLE:
+     os.precision(x.getPrecision());
      os << std::scientific << x.getDbl();
      break;
    case T_STRING:
@@ -40,6 +41,7 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
 
 std::string jsValue::stringify() const{
   std::stringstream ss;
+//  ss.precision(numDecimals);
   ss.str("");
   ss << (*this); 
   return ss.str();
@@ -69,9 +71,10 @@ jsValue::jsValue(const int &v) {
   intVal = (long) v;
 }
 
-jsValue::jsValue(const double &v) {
+jsValue::jsValue(const double &v, int precision_) {
   init();
   type = T_DOUBLE;
+  precision = precision_;
   dblVal = v;
 }
 
@@ -130,13 +133,13 @@ jsValue::jsValue(std::vector<std::string> &v) {
   }
 }
 
-jsValue::jsValue(std::vector<double> &v) {
+jsValue::jsValue(std::vector<double> &v, int precision_) {
   init();
   type = T_ARRAY;
   arrayVal.clear();
   for (unsigned int i=0; i<v.size(); i++) {
 //    jsValue e(v[i]);
-    arrayVal.push_back(jsValue(v[i]));
+    arrayVal.push_back(jsValue(v[i], precision_));
   }
 }
 
@@ -170,6 +173,11 @@ double jsValue::getDbl() const {
   } else {
     return (1.0*intVal);
   }
+}
+
+int jsValue::getPrecision() const {
+  if (type != T_DOUBLE) throw_("requesting precision from non-dbl jsonValue: " + stringVal);
+  return precision;
 }
 
 std::string  jsValue::getString() const {

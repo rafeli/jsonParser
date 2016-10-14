@@ -82,14 +82,15 @@ void TestJsonParser::testParseString() {
 
 
 
-  // -2- just a double
+  // -2- just a double: precision is set to default = LOWPRECISION
+  //     TODO: set precision based on string !!
   test_ = "parseDouble";
   try {
     actual_.str("");
     expected_=  testString = "6.022300e-23";
     driver.parse(testString);
     actual_ << driver.result; 
-    TestTools::report(actual_.str(), expected_, test_); 
+    TestTools::report(actual_.str(), "6.02e-23", test_); 
     MYLOG(DEBUG,"Test double complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
