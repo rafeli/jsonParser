@@ -8,6 +8,7 @@
 int main(int argc, char ** argv) {
 
   std::string logFileName="test.log";
+  int numTests = 0 ;
 
   Logging::prepare();
 
@@ -20,12 +21,12 @@ int main(int argc, char ** argv) {
 
   // -2- test each unit
   TestJsonParser testJsonParser;
-  testJsonParser.testAll();
+  numTests += testJsonParser.testAll();
   TestJsValue testJsValue;
-  testJsValue.testAll();
+  numTests += testJsValue.testAll();
 
   // -3- finalize
   TestTools::testingComplete();
-  std::cout << "All tests finished \n";
+  std::cout << numTests << " tests finished \n";
 
 }

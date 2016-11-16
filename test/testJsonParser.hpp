@@ -16,9 +16,9 @@ public:
 
   ~TestJsonParser();
 
-  void testAll();
+  int testAll();
 
-  void testParseString();
+  int testParseString();
 
 
 };

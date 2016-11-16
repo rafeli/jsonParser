@@ -19,13 +19,16 @@ static yy::location loc;
 // read opening double quotes, 
 // read any repetition of: (either \" or something neiter \ nor ")
 // read closing double quotes
+// do NOT read '-' as part of a number, we parse this later
 %}
 %option noyywrap nounput batch debug noinput
 doubleQuotedString   \"(\\\"|[^"])*\"
 singleQuotedString   \'[^\"]*\'
 id    [a-zA-Z][a-zA-Z_0-9]*
-int   [-+]?[0-9]+
-dbl   [-+]?[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?
+int   [+]?[0-9]+
+dblE   [0-9]\.[0-9]*([eE][-+]?[0-9][0-9])
+dblF   [0-9]*\.[0-9]*
+dblS   [+]?[0-9]*\.?[0-9]*[eE][-+]?[0-9]+
 blank [ \t]
 
 %{
@@ -58,9 +61,27 @@ blank [ \t]
   return yy::calcxx_parser::make_NUMBER_I(n, loc);
 }
 
-{dbl}      {
-  double n = std::stod (yytext, NULL);
-  return yy::calcxx_parser::make_NUMBER_F(n, loc);
+{dblE}      {
+  // double scientific format
+  return yy::calcxx_parser::make_NUMBER_F(yytext, loc);
+}
+
+{dblF}      {
+  // double fixed format: convert to scientific with standard precision 
+  std::stringstream ss("");
+  std::size_t pos = std::string(yytext).find(".");
+  ss.precision(strlen(yytext) - pos);
+  ss << std::scientific << std::stod (yytext, NULL);
+  return yy::calcxx_parser::make_NUMBER_F(ss.str(), loc);
+}
+
+{dblS}      {
+  // double non-standard "scientific" format, e.g. .2E5 or 12.1E033
+  // exact same code as above ...
+  std::stringstream ss("");
+  ss.precision(LOWPRECISION);
+  ss << std::scientific << std::stod (yytext, NULL);
+  return yy::calcxx_parser::make_NUMBER_F(ss.str(), loc);
 }
 
 {doubleQuotedString} {

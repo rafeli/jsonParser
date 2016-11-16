@@ -15,13 +15,13 @@ TestJsValue::~TestJsValue(){}
 int TestJsValue::testAll(){
   int numTests = 0;
 
-  testInt();
+  numTests +=   testInt();
 
-  testArray();
+  numTests +=   testArray();
 
-  testObject();
+  numTests +=   testObject();
 
-  testString();
+  numTests +=   testString();
 
   numTests += testConstructors();
 
@@ -29,7 +29,7 @@ int TestJsValue::testAll(){
 }
 
 
-void TestJsValue::testString(){
+int TestJsValue::testString(){
 
   std::string plain="ab@cd",                               //  abcd
           quote="ein \" quote",                            //  ein " quote
@@ -101,9 +101,11 @@ void TestJsValue::testString(){
   catch(std::string s) {
     std::cout << "Exception thrown in testString: " << s << std::endl;
   }
+
+  return 20;
 }
 
-void TestJsValue::testInt(){
+int TestJsValue::testInt(){
 
   jsValue intVal( 17),
           stringVal("abcd");
@@ -127,9 +129,11 @@ void TestJsValue::testInt(){
   catch(char const *s) {
     std::cout << "Exception thrown in testInt: " << s << std::endl;
   }
+
+  return 1;
 }
 
-void TestJsValue::testArray(){
+int TestJsValue::testArray(){
 
   jsValue intVal(17),
           stringVal("abcd");
@@ -144,8 +148,7 @@ void TestJsValue::testArray(){
     myVector.clear();
     myVector.push_back(intVal);
     myVector.push_back(stringVal);
-    jsValue arrayVal((myVector)); // 2016: was macht move noch mal ???
-//    jsValue arrayVal(std::move(myVector)); // 2016: was macht move noch mal ???
+    jsValue arrayVal((myVector)); 
 
     // -1-   test read JSON Array 
     actual_.str("");
@@ -155,7 +158,7 @@ void TestJsValue::testArray(){
 
     // -2- test read CPP Array into JSON
     actual_.str("");
-    expected_ = "[\"aaa\", \"bbb\"][17, -129][-1.000000e+00, 1.414230e+00]";
+    expected_ = "[\"aaa\", \"bbb\"][17, -129][-1.00000e+00, 1.41423e+00]";
     std::vector<std::string> stringVector;
     std::vector<long> intVector;
     std::vector<double> dblVector;
@@ -167,7 +170,7 @@ void TestJsValue::testArray(){
     dblVector.push_back(1.41423);
     jsValue x1(stringVector);
     jsValue x2(intVector);
-    jsValue x3(dblVector);
+    jsValue x3(dblVector, 5); // 5 = precision
     std::string x3s = x3.stringify();
     actual_ <<  x1 << x2 << x3s ;
     TestTools::report(actual_.str(), expected_, test_);
@@ -178,13 +181,15 @@ void TestJsValue::testArray(){
   } catch (std::string s) {
     std::cout << "Exception thrown in testArray: " << s << std::endl;
   }
+
+  return 2;
 }
 
-void TestJsValue::testObject(){
+int TestJsValue::testObject(){
 
   jsValue intVal(17),
           stringVal("abcd"),
-          dblVal(1.17E+003);
+          dblVal(1.17E+003, FULLPRECISION);  // 
   std::vector<jsValue> myVector;
   jsObject myObject;
 
@@ -208,7 +213,7 @@ void TestJsValue::testObject(){
 
     // -1-   test  
     actual_.str("");
-    expected_ = "{\"myDouble\":1.170000e+03, \"myInt\":17, \"myString\":\"abcd\", \"myVector\":[17, \"abcd\", 1.170000e+03]}";
+    expected_ = "{\"myDouble\":1.1700000000000000e+03, \"myInt\":17, \"myString\":\"abcd\", \"myVector\":[17, \"abcd\", 1.1700000000000000e+03]}";
     actual_ <<  myObject ;
     TestTools::report(actual_.str(), expected_, test_);
 
@@ -218,6 +223,8 @@ void TestJsValue::testObject(){
   } catch (std::string s) {
     std::cout << "Exception thrown in testArray: " << s << std::endl;
   }
+
+  return 2;
 }
 
 int TestJsValue::testConstructors(){
@@ -322,12 +329,21 @@ int TestJsValue::testConstructors(){
     } else {
        TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
     }
+
+    if (y->getObject().get("x").getDbl()==a) {
+       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+    }
+
+    if (z.getObject().get("x").getDbl()==a) {
+       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    } else {
+       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+    }
   } catch (std::string e) {
     TestTools::report("Error:", e , "jsValue(std::vector<double>)");
   }
-
-  
-
 
   return 15; 
 }

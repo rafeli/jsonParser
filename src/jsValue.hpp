@@ -15,12 +15,15 @@
 #define T_ARRAY 3
 #define T_OBJECT 4
 
+#define FULLPRECISION 16
+#define LOWPRECISION 2
+
 
 class jsValue {
 
   private:
 
-  int type;
+  int type, precision;
 
   long intVal; 
 
@@ -41,7 +44,7 @@ class jsValue {
   jsValue(const long &);
   jsValue(const int &);
 
-  jsValue(const double &);
+  jsValue(const double &, int precision = LOWPRECISION);
 
   jsValue(const std::string &, bool encoded = false);
  
@@ -55,7 +58,7 @@ class jsValue {
 
   // following  not needed for parsing, added 2016 to allow stringify
   jsValue(std::vector<std::string> &);
-  jsValue(std::vector<double> &);
+  jsValue(std::vector<double> &, int precision = LOWPRECISION);
   jsValue(std::vector<long> &);
   std::string stringify() const;
 
@@ -68,6 +71,7 @@ class jsValue {
   int getInt() const;
 
   double getDbl() const;
+  int getPrecision() const;
 
   std::vector<jsValue> getArray() const;
 
