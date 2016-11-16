@@ -18,7 +18,9 @@ class jsObject {
 
   void add(std::string, jsValue);
 
-  jsValue get(std::string);
+  const jsValue get(const std::string&);
+
+  jsValue& getRef(const std::string&);
 
   bool has(std::string);
 

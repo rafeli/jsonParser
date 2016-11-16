@@ -27,7 +27,12 @@ void jsObject::add(std::string key, jsValue val) {
   myValues.insert(std::pair<std::string, jsValue>(key,val));
 }
 
-jsValue jsObject::get(std::string key) {
+const jsValue jsObject::get(const std::string& key) {
+  if (myValues.count(key) == 0) throw "requesting unknown field from jsObject: " + key ;
+  return myValues[key];
+}
+
+jsValue& jsObject::getRef(const std::string& key) {
   if (myValues.count(key) == 0) throw "requesting unknown field from jsObject: " + key ;
   return myValues[key];
 }
