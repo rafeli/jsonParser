@@ -1,4 +1,5 @@
-CC = g++ -D_GLIBCXX_USE_CXX11_ABI=0
+CC = g++ 
+#CC = g++ -D_GLIBCXX_USE_CXX11_ABI=0
 CFLAGS = -Wall -g -std=c++0x
 LFLAGS = -L ~/local/lib
 INCLUDES = -I ~/local/include
