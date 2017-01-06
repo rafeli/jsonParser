@@ -103,19 +103,14 @@ jsValue::jsValue(const std::string &s, bool encoded) {
   }
 }
  
-jsValue::jsValue(std::vector<jsValue> &v) {
+jsValue::jsValue(const std::vector<jsValue> &v) {
   init();
   type = T_ARRAY;
   arrayVal = v;
 }
 
-//jsValue::jsValue(std::vector<jsValue> &&v) {
-//  init();
-//  type = T_ARRAY;
-//  arrayVal = v;
-//}
 
-jsValue::jsValue(jsObject &x) {
+jsValue::jsValue(const jsObject &x) {
   init();
   type = T_OBJECT;
   objectVal = x;
@@ -123,7 +118,7 @@ jsValue::jsValue(jsObject &x) {
 
 // new Constructors, not needed for parsing but for stringify
 // havent managed this with templates (linker doesnt find specific functions)
-jsValue::jsValue(std::vector<std::string> &v) {
+jsValue::jsValue(const std::vector<std::string> &v) {
   init();
   type = T_ARRAY;
   arrayVal.clear();
@@ -133,7 +128,7 @@ jsValue::jsValue(std::vector<std::string> &v) {
   }
 }
 
-jsValue::jsValue(std::vector<double> &v, int precision_) {
+jsValue::jsValue(const std::vector<double> &v, int precision_) {
   init();
   type = T_ARRAY;
   arrayVal.clear();
@@ -144,7 +139,7 @@ jsValue::jsValue(std::vector<double> &v, int precision_) {
 }
 
  
-jsValue::jsValue(std::vector<long> &v) {
+jsValue::jsValue(const std::vector<long> &v) {
   init();
   type = T_ARRAY;
   arrayVal.clear();

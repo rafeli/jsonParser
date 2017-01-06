@@ -20,8 +20,7 @@ test/testRunner : install $(OBJS) $(TESTOBJS)
 	$(CC) $(LFLAGS) -o test/testRunner $(TESTOBJS) -lmomoLogging -ljson
 
 test/%.o: test/%.cpp test/%.hpp
-	$(CC) -c $(INCLUDES) $(CFLAGS) $<
-	mv *.o test
+	$(CC) -o $@ -c $(INCLUDES) $(CFLAGS) $<
 
 src/scanner.o : src/scanner.cpp src/json.hpp src/parser.tab.hh
 	cd src; $(CC) $(CFLAGS) -c scanner.cpp
