@@ -1,4 +1,10 @@
 CC = g++ 
+HOSTNAME = $(shell hostname)
+$(info $$HOSTNAME is '${HOSTNAME}')
+ifeq "$(HOSTNAME)" "castor"
+CC = g++ -D_GLIBCXX_USE_CXX11_ABI=0
+endif
+
 #CC = g++ -D_GLIBCXX_USE_CXX11_ABI=0
 CFLAGS = -Wall -g -std=c++0x
 LFLAGS = -L ~/local/lib
