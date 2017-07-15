@@ -138,6 +138,16 @@ jsValue::jsValue(const std::vector<double> &v, int precision_) {
   }
 }
 
+jsValue::jsValue(const std::vector<long double> &v, int precision_) {
+  init();
+  type = T_ARRAY;
+  arrayVal.clear();
+  for (unsigned int i=0; i<v.size(); i++) {
+//    jsValue e(v[i]);
+    arrayVal.push_back(jsValue(v[i], precision_));
+  }
+}
+
  
 jsValue::jsValue(const std::vector<long> &v) {
   init();

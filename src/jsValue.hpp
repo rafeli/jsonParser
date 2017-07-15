@@ -56,6 +56,7 @@ class jsValue {
   // following  not needed for parsing, added 2016 to allow stringify
   jsValue(const std::vector<std::string> &);
   jsValue(const std::vector<double> &, int precision = LOWPRECISION);
+  jsValue(const std::vector<long double> &, int precision = LOWPRECISION);
   jsValue(const std::vector<long> &);
   std::string stringify() const;
 
