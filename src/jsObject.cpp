@@ -40,3 +40,12 @@ jsValue& jsObject::getRef(const std::string& key) {
 bool jsObject::has(std::string key) {
   return (myValues.count(key) > 0) ;
 }
+
+void jsObject::getKeys(std::vector<std::string>& keys) const {
+
+  for (auto it=myValues.begin(); it != myValues.end(); it++) {
+      keys.push_back(it->first);
+  }
+}
+
+

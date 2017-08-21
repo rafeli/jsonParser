@@ -220,7 +220,11 @@ std::string jsValue::getEncodedString() const {
 }
 
 std::vector<jsValue>  jsValue::getArray() const {
-  
+  if (type != T_ARRAY) throw_( "requesting array from non-array jsonValue");
+  return arrayVal;
+}
+
+std::vector<jsValue>&  jsValue::getArrayRef() {
   if (type != T_ARRAY) throw_( "requesting array from non-array jsonValue");
   return arrayVal;
 }
@@ -253,4 +257,53 @@ void jsValue::add(jsValue x) {
 void jsValue::add(std::string key_, jsValue value_) {
   if (type != T_OBJECT) throw_("adding keyValuePair to non-object jsonValue");
   objectVal.add(key_, value_);
+}
+
+std::string jsValue::toXML(const std::string& tagName, int indent) const {
+
+  std::stringstream s;
+  std::vector<jsValue> myArray;
+  std::map<std::string, jsValue> myValues;
+  std::vector<std::string> keys;
+
+
+  // -0- calculate indent
+  std::string lStartT = "\n" + std::string(indent,' ') + "<",
+              lCloseT = "\n" + std::string(indent,' ') + "</";
+
+  // -1- 
+  switch (getType()) {
+  case T_OBJECT:
+    s << lStartT << tagName << ">" ;
+    getObject().getKeys(keys);
+    for (std::size_t i=0; i<keys.size(); i++) {
+      s << getObject().getRef(keys[i]).toXML(keys[i], indent + 2);
+    }
+    s << lCloseT << tagName << ">"; 
+  break;
+  case T_ARRAY:
+    myArray = getArray();
+    for (std::size_t i=0; i<myArray.size(); i++) {
+       s << myArray[i].toXML(tagName, indent );  
+    }
+  break;
+  case T_STRING:
+    s << lStartT << tagName << ">" ;
+    s << getString();
+    if (getString().find("\n") == std::string::npos) {
+      s << "</" << tagName << ">"; 
+    } else {
+      s << lCloseT << tagName << ">"; 
+    } 
+  break;
+  default:
+    s << lStartT << tagName << ">" ;
+    s << (*this);
+    s << "</" << tagName << ">"; 
+  }
+
+
+  // -4- return
+  return s.str();
+
 }

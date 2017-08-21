@@ -73,11 +73,16 @@ class jsValue {
 
   std::vector<jsValue> getArray() const;
 
+  std::vector<jsValue>& getArrayRef() ;
+
   jsObject getObject() const;
 
   std::string getString() const;
 
   std::string getEncodedString() const;
+
+  std::string toXML(const std::string& tagName, int indent=0 ) const;
+
 
   // convenience:
   std::vector<double> getDblArray() const;

@@ -2,6 +2,7 @@
 #define _JSOBJ_HPP
 
 #include <map>
+#include <vector>
 #include <string>
 
 class jsValue;
@@ -22,7 +23,10 @@ class jsObject {
 
   jsValue& getRef(const std::string&);
 
+  void getKeys(std::vector<std::string>& keys) const;
+
   bool has(std::string);
+
 
 };
 
