@@ -138,6 +138,7 @@ int TestJsValue::testArray(){
   jsValue intVal(17),
           stringVal("abcd");
   std::vector<jsValue> myVector;
+  int numTests = 0;
 
   try{
     std::stringstream actual_;
@@ -155,6 +156,7 @@ int TestJsValue::testArray(){
     expected_ = "[17, \"abcd\"]";
     actual_ <<  arrayVal ;
     TestTools::report(actual_.str(), expected_, test_);
+    numTests++;
 
     // -2- test read CPP Array into JSON
     actual_.str("");
@@ -174,6 +176,18 @@ int TestJsValue::testArray(){
     std::string x3s = x3.stringify();
     actual_ <<  x1 << x2 << x3s ;
     TestTools::report(actual_.str(), expected_, test_);
+    numTests++;
+
+    // -3- (2017) accessing array of objects
+    jsValue myObjects(std::vector<jsValue>{});
+    myObjects.add(jsValue(jsObject()));
+    myObjects.add(jsValue(jsObject()));
+    myObjects.add(jsValue(jsObject()));
+    myObjects.getRef(1).add("name",jsValue("objB"));
+    myObjects.getRef(2).add("name",jsValue("objC"));
+    myObjects.getRef(0).add("name",jsValue("objA, not:" + myObjects.getRef(1).getRef("name").getString()));
+    TestTools::report(myObjects.getRef(0).getRef("name").getString(), "objA, not:objB", test_);
+    numTests++;
     
 
     // ???
@@ -182,7 +196,7 @@ int TestJsValue::testArray(){
     std::cout << "Exception thrown in testArray: " << s << std::endl;
   }
 
-  return 2;
+  return numTests;
 }
 
 int TestJsValue::testObject(){

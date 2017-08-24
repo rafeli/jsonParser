@@ -83,6 +83,10 @@ class jsValue {
 
   std::string toXML(const std::string& tagName, int indent=0 ) const;
 
+  // NEU 2017: soll getArray, getObject, getArrayRef, .. ersetzen ?
+  jsValue& getRef(std::size_t);
+  jsValue& getRef(std::string);
+
 
   // convenience:
   std::vector<double> getDblArray() const;

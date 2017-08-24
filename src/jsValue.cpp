@@ -229,6 +229,19 @@ std::vector<jsValue>&  jsValue::getArrayRef() {
   return arrayVal;
 }
 
+jsValue&  jsValue::getRef(std::size_t i) {
+  if (type != T_ARRAY) throw_( "requesting array element from non-array jsonValue");
+  if (i >= arrayVal.size()) throw_( "array index error");
+  return arrayVal[i];
+}
+
+jsValue&  jsValue::getRef(std::string key) {
+
+  if (type != T_OBJECT) throw_( "requesting property from non-object jsonValue");
+  return objectVal.getRef(key);
+}
+
+
 std::vector<double>  jsValue::getDblArray() const {
 
   try {
