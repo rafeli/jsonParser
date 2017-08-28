@@ -57,6 +57,7 @@ void jsValue::init() {
 
 jsValue::jsValue() {
   init();
+  type = T_OBJECT;
 }
 
 jsValue::jsValue(const long &v) {
@@ -241,6 +242,15 @@ jsValue&  jsValue::getRef(std::string key) {
   return objectVal.getRef(key);
 }
 
+bool jsValue::has(std::string key) {
+  if (type != T_OBJECT) throw_( "testing property from non-object jsonValue");
+  return objectVal.has(key);
+}
+
+std::size_t jsValue::size() {
+  if (type != T_ARRAY) throw_( "requesting size from non-Array jsonValue");
+  return arrayVal.size();
+}
 
 std::vector<double>  jsValue::getDblArray() const {
 

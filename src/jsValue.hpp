@@ -39,7 +39,7 @@ class jsValue {
 
   public:
 
-  jsValue(); // TODO: is this needed ???
+  jsValue(); // default constructor gives an object-type value
 
   jsValue(const long &);
   jsValue(const int &);
@@ -86,6 +86,8 @@ class jsValue {
   // NEU 2017: soll getArray, getObject, getArrayRef, .. ersetzen ?
   jsValue& getRef(std::size_t);
   jsValue& getRef(std::string);
+  bool has(std::string);
+  std::size_t size();
 
 
   // convenience:
