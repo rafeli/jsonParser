@@ -19,7 +19,7 @@ class jsObject {
 
   void add(std::string, jsValue);
 
-  const jsValue get(const std::string&);
+  const jsValue get(const std::string&) const;
 
   jsValue& getRef(const std::string&);
 

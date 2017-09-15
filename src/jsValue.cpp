@@ -247,6 +247,21 @@ bool jsValue::has(std::string key) {
   return objectVal.has(key);
 }
 
+std::string jsValue::getString(std::string key) const {
+  if (type != T_OBJECT) throw_( "getting string-property from non-object jsonValue");
+  return objectVal.get(key).getString();
+}
+
+int jsValue::getInt(std::string key) const {
+  if (type != T_OBJECT) throw_( "getting int-property from non-object jsonValue");
+  return objectVal.get(key).getInt();
+}
+
+double jsValue::getDbl(std::string key) const {
+  if (type != T_OBJECT) throw_( "getting double-property from non-object jsonValue");
+  return objectVal.get(key).getDbl();
+}
+
 std::size_t jsValue::size() {
   if (type != T_ARRAY) throw_( "requesting size from non-Array jsonValue");
   return arrayVal.size();

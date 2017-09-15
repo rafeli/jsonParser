@@ -27,9 +27,12 @@ void jsObject::add(std::string key, jsValue val) {
   myValues.insert(std::pair<std::string, jsValue>(key,val));
 }
 
-const jsValue jsObject::get(const std::string& key) {
+const jsValue jsObject::get(const std::string& key) const {
   if (myValues.count(key) == 0) throw "requesting unknown field from jsObject: " + key ;
-  return myValues[key];
+
+  // at has const and non-const variants and will here choose const
+  // the []-operator is always non-const and cannot be used here
+  return myValues.at(key); 
 }
 
 jsValue& jsObject::getRef(const std::string& key) {

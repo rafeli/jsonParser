@@ -203,9 +203,9 @@ int TestJsValue::testObject(){
 
   jsValue intVal(17),
           stringVal("abcd"),
-          dblVal(1.17E+003, FULLPRECISION);  // 
-  std::vector<jsValue> myVector;
-  jsObject myObject;
+          dblVal(1.17E+003, FULLPRECISION),
+          myVector( std::vector<jsValue>({intVal,stringVal})),
+          myObject;
 
   try{
     std::stringstream actual_;
@@ -213,11 +213,7 @@ int TestJsValue::testObject(){
                 expected_ = "";
     // -0- 
     MYLOG(DEBUG, "entering");
-    myVector.clear();
-    myVector.push_back(intVal);
-    myVector.push_back(stringVal);
-    myVector.push_back(dblVal);
-//    jsValue arrayVal(std::move(myVector));
+    myVector.add(dblVal);
     jsValue arrayVal((myVector));
     myObject.add("myInt", intVal);
     myObject.add("myString", stringVal);

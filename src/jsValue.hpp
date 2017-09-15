@@ -84,10 +84,14 @@ class jsValue {
   std::string toXML(const std::string& tagName, int indent=0 ) const;
 
   // NEU 2017: soll getArray, getObject, getArrayRef, .. ersetzen ?
+  // methoden die nur angewendet werden koennen/duerfen, wenn jsValue ein Objekt
   jsValue& getRef(std::size_t);
   jsValue& getRef(std::string);
   bool has(std::string);
   std::size_t size();
+  std::string getString(std::string key) const;
+  int getInt(std::string key) const;
+  double getDbl(std::string key) const;
 
 
   // convenience:
