@@ -45,7 +45,7 @@ jsObject getJSONObject(const std::string& m) {
     driver.parse(m);
     return driver.result.getObject();
   } catch (std::string e) {
-    throw std::string(" reading JSON Object from String:" + e );
+    throw std::string(" reading JSON Object from String:" + e  + "\n" + m);
   }
 
 }

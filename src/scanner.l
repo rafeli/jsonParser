@@ -30,6 +30,8 @@ dblE   [0-9]\.[0-9]*([eE][-+]?[0-9][0-9])
 dblF   [0-9]*\.[0-9]*
 dblS   [+]?[0-9]*\.?[0-9]*[eE][-+]?[0-9]+
 blank [ \t]
+true (true|TRUE)
+false (false|FALSE)
 
 %{
   // Code run each time a pattern is matched.
@@ -110,6 +112,8 @@ blank [ \t]
   return yy::calcxx_parser::make_STRING(s, loc);
 }
 {singleQuotedString}       return yy::calcxx_parser::make_STRING(yytext, loc);
+{true}                     return yy::calcxx_parser::make_TRUE(true, loc);
+{false}                    return yy::calcxx_parser::make_FALSE(false, loc);
 {id}                       return yy::calcxx_parser::make_IDENTIFIER(yytext, loc);
 .          driver.error (loc, "invalid character");
 <<EOF>>    return yy::calcxx_parser::make_END(loc);

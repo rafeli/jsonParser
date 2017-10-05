@@ -39,6 +39,8 @@ class calcxx_driver;
 ;
 %token <std::string> IDENTIFIER "identifier"
 %token <long> NUMBER_I 
+%token <bool> TRUE 
+%token <bool> FALSE 
 %token <std::string> NUMBER_F 
 %token <std::string> STRING 
 %type  <jsValue> jsonexp
@@ -61,6 +63,8 @@ jsonexp : jsvalue {driver.result =std::move($1);};
 
 jsvalue : NUMBER_I    {$$ = *(new jsValue($1));}
         | MINUS NUMBER_I    {$$ = *(new jsValue(-1*$2));}
+        | TRUE    {$$ = *(new jsValue(1));}
+        | FALSE    {$$ = *(new jsValue(0));}
         | NUMBER_F    {  // convert string to double to jsValue,
                          // determine precision = $1.length() - 6
                          // based on assumption scientific notation 
