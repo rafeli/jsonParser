@@ -1,7 +1,7 @@
 #ifndef _TESTJsValue_HPP
 #define _TESTJsValue_HPP
 
-#include "testTools.hpp"
+#include "momo/testTools.hpp"
 #include "momo/logging.hpp"
 #include "../src/jsValue.hpp"
 #include "../src/json.hpp"

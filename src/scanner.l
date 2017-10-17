@@ -5,6 +5,7 @@
 # include <string>
 # include "json.hpp"
 # include "parser.tab.hh"
+# include "momo/binaryCoding.hpp"
 
 // Work around an incompatibility in flex (at least versions
 // 2.5.31 through 2.5.33): it generates code that does
@@ -94,22 +95,24 @@ false (false|FALSE)
   // ??? warum muss ich enclosing doublequotes nicht wegnehmen ???
   // folgendes nimmt 1. und letzte char des enthaltenden strings weg
   //  s = s.substr(1,s.size() - 2);
+  // weil sie im parser weggenommen werden !!
 
-  // decode string from json (i.e. unescape \\ and \" )
-  // following should *not* decode e.g.:  abc\\"def 
-  while ((pos=s.find("\\\"",pos)) != std::string::npos) {
-    s.replace(pos,2,"\"");
-    pos+=1;
-  }
-  pos=0;
-  while ((pos=s.find("\\\\",pos)) != std::string::npos) {
-    s.replace(pos,2,"\\");
-    pos+=1;
-  }
+// 20171016
+//   // decode string from json (i.e. unescape \\ and \" )
+//   // following should *not* decode e.g.:  abc\\"def 
+   while ((pos=s.find("\\\"",pos)) != std::string::npos) {
+     s.replace(pos,2,"\"");
+     pos+=1;
+   }
+   pos=0;
+   while ((pos=s.find("\\\\",pos)) != std::string::npos) {
+     s.replace(pos,2,"\\");
+     pos+=1;
+   }
 
 //  std::cout << "yytext: " << yytext << "\ndecoded:" << s <<std::endl;
   
-  return yy::calcxx_parser::make_STRING(s, loc);
+  return yy::calcxx_parser::make_STRING((s), loc);
 }
 {singleQuotedString}       return yy::calcxx_parser::make_STRING(yytext, loc);
 {true}                     return yy::calcxx_parser::make_TRUE(true, loc);

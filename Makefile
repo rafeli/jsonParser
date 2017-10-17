@@ -23,19 +23,19 @@ install : $(OBJS)
 	ar rvs ~/local/lib/libjson.a $(OBJS)
 
 test/testRunner : install $(OBJS) $(TESTOBJS)
-	$(CC) $(LFLAGS) -o test/testRunner $(TESTOBJS) -lmomoLogging -ljson
+	$(CC) $(LFLAGS) -o test/testRunner $(TESTOBJS) -lmomoLogging -ljson -lmomoHTTP
 
 test/%.o: test/%.cpp test/%.hpp
 	$(CC) -o $@ -c $(INCLUDES) $(CFLAGS) $<
 
 src/scanner.o : src/scanner.cpp src/json.hpp src/parser.tab.hh
-	cd src; $(CC) $(CFLAGS) -c scanner.cpp
+	cd src; $(CC) $(INCLUDES) $(CFLAGS) -c scanner.cpp
 
 src/json.o : src/json.cpp src/parser.tab.hh src/json.hpp
-	cd src; $(CC) $(CFLAGS) -c json.cpp
+	cd src; $(CC) $(INCLUDES) $(CFLAGS) -c json.cpp
 
 src/parser.o : src/parser.tab.cc
-	cd src; $(CC) $(CFLAGS) -c -o parser.o parser.tab.cc
+	cd src; $(CC) $(INCLUDES) $(CFLAGS) -c -o parser.o parser.tab.cc
 
 src/parser.tab.cc src/parser.tab.hh src/position.hh src/location.hh src/stack.hh : src/parser.yy
 	cd src; $(BISON) parser.yy
@@ -44,10 +44,10 @@ src/scanner.cpp: src/scanner.l src/json.hpp
 	flex -o src/scanner.cpp src/scanner.l
 
 src/jsValue.o: src/jsValue.cpp src/jsValue.hpp
-	cd src; $(CC) $(CFLAGS) -c jsValue.cpp
+	cd src; $(CC) $(INCLUDES) $(CFLAGS) -c jsValue.cpp
 
 src/jsObject.o: src/jsObject.cpp src/jsObject.hpp
-	cd src; $(CC) $(CFLAGS) -c jsObject.cpp
+	cd src; $(CC) $(INCLUDES) $(CFLAGS) -c jsObject.cpp
 
 
 clean:

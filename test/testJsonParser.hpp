@@ -1,7 +1,7 @@
 #ifndef _TESTJsonParser_HPP
 #define _TESTJsonParser_HPP
 
-#include "testTools.hpp"
+#include "momo/testTools.hpp"
 #include "momo/logging.hpp"
 #include "../src/json.hpp"
 

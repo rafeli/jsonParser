@@ -24,7 +24,16 @@ jsObject::~jsObject() {
 }
 
 void jsObject::add(std::string key, jsValue val) {
+  if (has(key)) throw std::string("adding key-value for existing key " + key + ", you may want to use set?");
   myValues.insert(std::pair<std::string, jsValue>(key,val));
+}
+
+void jsObject::set(std::string key, jsValue val) {
+  if (has(key)) {
+    myValues[key] = val;
+  } else {
+    myValues.insert(std::pair<std::string, jsValue>(key,val));
+  }
 }
 
 const jsValue jsObject::get(const std::string& key) const {

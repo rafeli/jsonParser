@@ -1,4 +1,3 @@
-#include "jsObject.hpp"
 #include "jsValue.hpp"
 
 // casts char* Exception into std::string
@@ -18,6 +17,7 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      break;
    case T_STRING:
      os << "\"" << x.getEncodedString() << "\"";
+//     os << "\"" << x.getString() << "\"";
      break;
    case T_ARRAY:
      v = x.getArray();
@@ -40,11 +40,15 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
  }
 
 std::string jsValue::stringify() const{
-  std::stringstream ss;
 //  ss.precision(numDecimals);
-  ss.str("");
-  ss << (*this); 
-  return ss.str();
+  if (type == T_STRING) { 
+   return "\"" + getEncodedString() + "\"";
+  } else {
+    std::stringstream ss;
+    ss.str("");
+    ss << (*this); 
+    return ss.str();
+  }
 }
 
 void jsValue::init() {
@@ -84,24 +88,41 @@ jsValue::jsValue(const std::string &s, bool encoded) {
    type = T_STRING;
    stringVal = s;
 
-  // decode value if it was encoded
-  // this is a non-understood HACK: while parsing bison/flex
-  // seem to already decode \\ to \ and \" to "
-  // but not (?) \\n to \n
+  // decode value if it was encoded, this is currently (20171016)
+  // only if jsValue is called from json-parser. 
+  // Background is that JSON for a string is the same string enclosed in brackets
+  // , e.g. "abc" for abc and "{\"myString\":\"abc\"}" for the object {"myString":"abc"}
+  // a string like abc"def is represented in cpp as "abc\"def" but I chose to represent all
+  // stringvalues in my json-objects as base64-encoded strings. This seems to solve subtle bugs
+  // in (my use of) bison and handles \n \t very smoothly. The only remaining inconsistency is that
+  // JSON representations of strings must escape contained " whereas the strings dont need to:
+  // readJSONValue() reads JSON-code and expects escaped double-quotes, in cpp e.g.: "abc\\\"def"
+  // jsValue(std::string) reads strings and expects un-escaped, in cpp e.g.: "abc\"def"
   if (encoded) {
     std::size_t pos;
 
     pos =0;
-    while ((pos=stringVal.find("\\n",pos)) != std::string::npos) {
-      stringVal = stringVal.replace(pos,2,"\n");
+    while ((pos=stringVal.find("\\\"",pos)) != std::string::npos) {
+      stringVal = stringVal.replace(pos,2,"\"");
       pos += 1;
     }
-    pos =0;
-    while ((pos=stringVal.find("\\t",pos)) != std::string::npos) {
-      stringVal = stringVal.replace(pos,2,"\t");
-      pos += 1;
-    }
+// 20171016
+//    pos =0;
+//    while ((pos=stringVal.find("\\n",pos)) != std::string::npos) {
+//      stringVal = stringVal.replace(pos,2,"\n");
+//      pos += 1;
+//    }
+//    pos =0;
+//    while ((pos=stringVal.find("\\t",pos)) != std::string::npos) {
+//      stringVal = stringVal.replace(pos,2,"\t");
+//      pos += 1;
+//    }
   }
+
+// 20171016
+stringVal = b64toa(stringVal);
+// end 20171016
+
 }
  
 jsValue::jsValue(const std::vector<jsValue> &v) {
@@ -189,13 +210,16 @@ int jsValue::getPrecision() const {
 std::string  jsValue::getString() const {
 
   if (type != T_STRING) throw_("requesting string from non-string jsonValue");
-  return stringVal;
+  return atob64(stringVal);
 
 }
 
 std::string jsValue::getEncodedString() const {
 
-  std::string s = stringVal;
+  // the counterpart to this encoding is in scanning {doubleQuotedString}
+  // as implemented in scanner.l 
+
+  std::string s = atob64(stringVal);
   std::size_t pos;
 
   if (type != T_STRING) throw_("requesting string from non-string jsonValue");
@@ -210,13 +234,13 @@ std::string jsValue::getEncodedString() const {
     s = s.replace(pos,1,"\\\"");
     pos += 2;
   }
-  pos =0;
-  while ((pos=s.find("\n",pos+1)) != std::string::npos) {
-    s = s.replace(pos,1,"\\n");
-    pos += 2;
-  }
+//  pos =0;
+//  while ((pos=s.find("\n",pos+1)) != std::string::npos) {
+//    s = s.replace(pos,1,"\\n");
+//    pos += 2;
+//  }
   
-  return s;
+  return  s ;
 
 }
 
@@ -295,6 +319,11 @@ void jsValue::add(jsValue x) {
 void jsValue::add(std::string key_, jsValue value_) {
   if (type != T_OBJECT) throw_("adding keyValuePair to non-object jsonValue");
   objectVal.add(key_, value_);
+}
+
+void jsValue::set(std::string key_, jsValue value_) {
+  if (type != T_OBJECT) throw_("setting keyValuePair in non-object jsonValue");
+  objectVal.set(key_, value_);
 }
 
 std::string jsValue::toXML(const std::string& tagName, int indent) const {

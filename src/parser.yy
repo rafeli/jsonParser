@@ -80,7 +80,7 @@ jsvalue : NUMBER_I    {$$ = *(new jsValue($1));}
                       }
         | STRING      {
             std::string s =$1.substr(1,$1.size()-2);
-            jsValue v(s, true);  // true = decode from JSON (e.g. \\n to \n)
+            jsValue v(s, false);  // true = decode from JSON (e.g. \\n to \n)
             $$ = std::move(v);}
         | ARRAYOPEN jsarray ARRAYCLOSE    {$$ = std::move($2);}
         | OBJECTOPEN jsobject OBJECTCLOSE {$$ = std::move($2);}

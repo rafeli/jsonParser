@@ -31,66 +31,84 @@ int TestJsValue::testAll(){
 
 int TestJsValue::testString(){
 
-  std::string plain="ab@cd",                               //  abcd
-          quote="ein \" quote",                            //  ein " quote
-          escQuote="escaped \\\" quote",                   //  escaped \" quote
-          linebreak = "ab\ncd",                            //  escaped linebreak
-          plainJSON = "\"ab@cd\"",                          //  "abcd"
-          linebreakJSON = "\"ab\\ncd\"",                   //  "ab\ncd"
-          quoteJSON = "\"ein \\\" quote\"",                //  "ein \" quote"
-          escQuoteJSON = "\"escaped \\\\\\\" quote\"";     //  "escaped \\\" quote"
+  std::string plain="ab@cd",              //  ab@cd
+          quote="ab\"cd",                 //  ein " quote
+          backSlash="ab\\ncd",            //  ein \ backSlash
+          escQuote="ab\\\"cd",            //  escaped \" quote
+          linebreak = "ab\ncd",           //  ab
+                                          //  cd
 
-  jsValue jsPlain(plain), jsQuote(quote), jsEscQuote(escQuote), jsLineBreak(linebreak);
+          // corresponding JSON is strings enclosed in double-quotes
+          // *only* quotes and backslashes in string must be escaped
+          // \t and \n do not require any treatment
+          plainJSON = "\"ab@cd\"",       
+          quoteJSON = "\"" + escQuote + "\"", 
+          escQuoteJSON = "\"ab\\\\\\\"cd\"",
+          backSlashJSON = "\"ab\\\\ncd\"", 
+          linebreakJSON = "\"ab\ncd\"";
+
 
   try{
     std::stringstream actual_;
     std::string test_ = "testString",
                 expected_ = "";
+    jsValue jsPlain, jsQuote, jsEscQuote, jsBackSlash, jsLinebreak;
+
     // -0- 
     MYLOG(DEBUG, "ENTER");
 
     // -1- test constructor, these should take strings (without outer double quotes)
-    //     and handle contained double quotes correctly  
-    TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(plain string).stringify()");
-    TestTools::report(jsQuote.stringify(), quoteJSON, "jsValue(string w. double quote).stringify()");
-    TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(string w. escape).stringify()");
-    TestTools::report(jsLineBreak.stringify(), linebreakJSON, "jsValue(string w. \\n).stringify()");
+    //     getString should give original string, stringify() the corresponsing JSON
+    jsPlain = jsValue(plain); jsQuote = jsValue(quote); jsEscQuote = jsValue(escQuote);
+    jsBackSlash = jsValue(backSlash); jsLinebreak = jsValue(linebreak);
 
-    // -2- getString should give original string 
-    TestTools::report(jsPlain.getString(), plain, "jsValue(plain string).getString()");
-    TestTools::report(jsQuote.getString(), quote, "jsValue(string w. double quote).getString()");
-    TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(string w. escape).getString()");
-    TestTools::report(jsLineBreak.getString(), linebreak, "jsValue(string w \\n).getString()");
+    TestTools::report(jsPlain.getString(), plain, "jsValue(ab@cd).getString()");
+    TestTools::report(jsQuote.getString(),  quote , "jsValue(ab\"cd).getString()");
+    TestTools::report(jsBackSlash.getString(),  backSlash , "jsValue(ab\\cd).getString()");
+    TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(ab\\\"cd).getString()");
+    TestTools::report(jsLinebreak.getString(), linebreak, "jsValue(ab\\ncd).getString()");
 
-    // -3- same should work with getJSONValue
-    TestTools::report(getJSONValue(plainJSON).stringify(), plainJSON, "getJSONValue(plain string)");
-    TestTools::report(getJSONValue(quoteJSON).stringify(), quoteJSON, "getJSONValue(quote)");
-    TestTools::report(getJSONValue(escQuoteJSON).stringify(), escQuoteJSON, "getJSONValue(escaped quote)");
-    TestTools::report(getJSONValue(linebreakJSON).stringify(), linebreakJSON, "getJSONValue(string w. \\n)");
+    TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(ab@cd).stringify()");
+    TestTools::report(jsQuote.stringify(),  quoteJSON , "jsValue(ab\"cd).stringify()");
+    TestTools::report(jsBackSlash.stringify(), backSlashJSON , "jsValue(ab\\cd).stringify()");
+    TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(ab\\\"cd).stringify()");
+    TestTools::report(jsLinebreak.stringify(), linebreakJSON, "jsValue(ab\\ncd).stringify()");
 
-    TestTools::report(getJSONValue(plainJSON).getString(), plain, "getJSONValue(plain string)");
-    TestTools::report(getJSONValue(quoteJSON).getString(), quote, "getJSONValue(quote)");
-    TestTools::report(getJSONValue(escQuoteJSON).getString(), escQuote, "getJSONValue(escaped quote)");
-    TestTools::report(getJSONValue(linebreakJSON).getString(), linebreak, "getJSONValue(string w \\n)");
+    // -3- same with getJSONValue
+    jsPlain = getJSONValue(plainJSON); jsQuote = getJSONValue(quoteJSON); 
+    jsEscQuote = getJSONValue(escQuoteJSON); jsBackSlash = getJSONValue(backSlashJSON);
+    jsLinebreak = getJSONValue(linebreakJSON);
+
+    TestTools::report(jsPlain.getString(), plain, "jsValue(ab@cd).getString()");
+    TestTools::report(jsQuote.getString(),  quote , "jsValue(ab\"cd).getString()");
+    TestTools::report(jsBackSlash.getString(),  backSlash , "jsValue(ab\\cd).getString()");
+    TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(ab\\\"cd).getString()");
+    TestTools::report(jsLinebreak.getString(), linebreak, "jsValue(ab\\ncd).getString()");
+
+    TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(ab@cd).stringify()");
+    TestTools::report(jsQuote.stringify(),  quoteJSON , "jsValue(ab\"cd).stringify()");
+    TestTools::report(jsBackSlash.stringify(), backSlashJSON , "jsValue(ab\\cd).stringify()");
+    TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(ab\\\"cd).stringify()");
+    TestTools::report(jsLinebreak.stringify(), linebreakJSON, "jsValue(ab\\ncd).stringify()");
 
     // -4- tests on incorrect strings
     try {
       getJSONValue("a\\b").getString();
-      TestTools::report("a\\b incorrect", getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
+      TestTools::report(std::string("a\\b incorrect"), getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
     } catch (std::string s) {
       TestTools::report("a\\b no JSON", "a\\b no JSON", "getJSONValue(non-json)");
     }
 
     try {
       getJSONValue("a\"b").getString();
-      TestTools::report("a\"b incorrect", getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
+      TestTools::report(std::string("a\"b incorrect"), getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
     } catch (std::string s) {
       TestTools::report("a\"b no JSON", "a\"b no JSON", "getJSONValue(non-json)");
     }
 
     try {
       getJSONValue("a\\\\\"b").getString();
-      TestTools::report("a\\\\\"b incorrect", getJSONValue("a\\\\\"b").getString(), "getJSONValue(non-json)");
+      TestTools::report(std::string("a\\\\\"b incorrect"), getJSONValue("a\\\\\"b").getString(), "getJSONValue(non-json)");
     } catch (std::string s) {
       TestTools::report("a\\\\\"b no JSON", "a\\\\\"b no JSON", "getJSONValue(non-json)");
     }
@@ -99,6 +117,7 @@ int TestJsValue::testString(){
     MYLOG(DEBUG, "EXIT");
   } 
   catch(std::string s) {
+    TestTools::report(false, "exception in testString: " + s);
     std::cout << "Exception thrown in testString: " << s << std::endl;
   }
 
@@ -250,7 +269,7 @@ int TestJsValue::testConstructors(){
        TestTools::report("Error:", "" , "jsValue(int)");
     }
   } catch (std::string e) {
-    TestTools::report("Error:", e , "jsValue(int)");
+    TestTools::report(false , "Exception in jsValue(int): " + e);
   }
 
   // -2- construct from string
@@ -264,7 +283,7 @@ int TestJsValue::testConstructors(){
        TestTools::report("Error:", "" , "jsValue(string)");
     }
   } catch (std::string e) {
-    TestTools::report("Error:", e , "jsValue(string)");
+    TestTools::report(false , "Exception in jsValue(string): " + e);
   }
 
   // -3- construct from double
@@ -278,7 +297,7 @@ int TestJsValue::testConstructors(){
        TestTools::report("Error:", "" , "jsValue(double)");
     }
   } catch (std::string e) {
-    TestTools::report("Error:", e , "jsValue(double)");
+    TestTools::report(false , "Exception in jsValue(double): " + e);
   }
 
   // -4- construct from std::vector<double>
@@ -293,7 +312,7 @@ int TestJsValue::testConstructors(){
        TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
     }
   } catch (std::string e) {
-    TestTools::report("Error:", e , "jsValue(std::vector<double>)");
+    TestTools::report(false , "Exception in jsValue(std::vector<double>): " + e);
   }
 
   // -5- construct from std::vector<string>
@@ -308,7 +327,7 @@ int TestJsValue::testConstructors(){
        TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
     }
   } catch (std::string e) {
-    TestTools::report("Error:", e , "jsValue(std::vector<double>)");
+    TestTools::report(false , "Exception in jsValue(std::vector<double>): " + e);
   }
 
   // -6- construct from std::vector<jsValue>
@@ -323,7 +342,7 @@ int TestJsValue::testConstructors(){
        TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
     }
   } catch (std::string e) {
-    TestTools::report("Error:", e , "jsValue(std::vector<double>)");
+    TestTools::report(false, "Exception in jsValue(std::vector<double>): " + e);
   }
 
   // -7- construct from jsObject
@@ -352,7 +371,7 @@ int TestJsValue::testConstructors(){
        TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
     }
   } catch (std::string e) {
-    TestTools::report("Error:", e , "jsValue(std::vector<double>)");
+    TestTools::report(false, "Exception in jsValue(std::vector<double>): " + e);
   }
 
   return 15; 

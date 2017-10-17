@@ -2,7 +2,7 @@
 
 #include "testJsonParser.hpp"
 #include "testJsValue.hpp"
-#include "testTools.hpp"
+#include "momo/testTools.hpp"
 #include "momo/logging.hpp"
 
 int main(int argc, char ** argv) {

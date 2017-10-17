@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "jsObject.hpp"
+#include "momo/binaryCoding.hpp"
 
 #define T_UNDEFINED -1
 #define T_INT 0
@@ -44,7 +45,7 @@ class jsValue {
   jsValue(const long &);
   jsValue(const int &);
   jsValue(const double &, int precision = LOWPRECISION);
-  jsValue(const std::string &, bool encoded = false);
+  jsValue(const std::string &, bool encoded = false); // TODO: encoded=true no longer required ?!!
   jsValue(const std::vector<jsValue> &);
 // the following allowed e.g. jsValue x = y; with y a std::vector<jsValue>
 // without we now need: jsValule x = jsValue(y); which is clearer to me
@@ -62,7 +63,8 @@ class jsValue {
 
   void add(jsValue); // add to array
 
-  void add(std::string, jsValue); // add to object
+  void add(std::string, jsValue); // add key/value to object
+  void set(std::string, jsValue); // set key/value in object, add if non-existent
 
   int getType() const;
 

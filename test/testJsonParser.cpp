@@ -62,7 +62,7 @@ int TestJsonParser::testParseString() {
     testString = "\"12abc34\"";
     driver.parse(testString);
     actual_ << driver.result; 
-    TestTools::report(actual_.str(), expected_, test_); 
+    TestTools::report(actual_.str(), expected_, "just a string"); 
     MYLOG(DEBUG,"Test String complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
@@ -74,19 +74,19 @@ int TestJsonParser::testParseString() {
     expected_= testString =  "\"12abc34\"";
     driver.parse(testString);
     actual_ << driver.result; 
-    TestTools::report(actual_.str(), expected_, test_); 
+    TestTools::report(actual_.str(), expected_, "a single quoted string"); 
     MYLOG(DEBUG,"Test Single Quoted String complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-  // -5- string with \t and \n
+  // -5- string with \t and \n and \"
   //     changed to \\t and \\n, as these chars are encoded in JSON
   try {
-    testString =     "\"12\\tabc\\n34\"";
-    expected_=    "12\tabc\n34";
+    testString =     "\"12\tabc\\\"def\n34\"";
+    expected_=    "12\tabc\"def\n34";
     driver.parse(testString);
-    TestTools::report(driver.result.getString(), expected_, test_); 
+    TestTools::report(driver.result.getString(), expected_, "single quoted string containing tab and cr"); 
     MYLOG(DEBUG,"Test Single Quoted String complete");
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
@@ -168,11 +168,9 @@ int TestJsonParser::testParseString() {
   // -12- a simple object
   try {
     actual_.str("");
-    expected_= testString = "{\"myInt\" : 12, \"myArray\" : [12, \"abc\"]}";
+    expected_= testString = "{\"myArray\":[12, \"abc\"], \"myInt\":12}";
     driver.parse(testString);
     actual_ << driver.result.getObject();
-//    jsObject result = driver.result.getObject();
-//    actual_ << result.get("myInt") << ", " << result.get("myArray") ; 
     TestTools::report(actual_.str(), expected_, test_); 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
