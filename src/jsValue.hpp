@@ -54,6 +54,11 @@ class jsValue {
 
   jsValue(const jsObject &);
 
+  // TODO: implement Compare (?), < , > 
+  bool operator == (const jsValue& d) const {
+    return (stringify() == d.stringify());
+  }
+
   // following  not needed for parsing, added 2016 to allow stringify
   jsValue(const std::vector<std::string> &);
   jsValue(const std::vector<double> &, int precision = LOWPRECISION);
@@ -87,13 +92,17 @@ class jsValue {
 
   // NEU 2017: soll getArray, getObject, getArrayRef, .. ersetzen ?
   // methoden die nur angewendet werden koennen/duerfen, wenn jsValue ein Objekt
-  jsValue& getRef(std::size_t);
-  jsValue& getRef(std::string);
+  jsValue& getRef(std::size_t index); 
+  jsValue& getRef(std::string key);
   bool has(std::string);
-  std::size_t size();
+  std::size_t size() const;
   std::string getString(std::string key) const;
   int getInt(std::string key) const;
   double getDbl(std::string key) const;
+  std::string getString(std::size_t index) const;
+  int getInt(std::size_t index) const;
+  double getDbl(std::size_t index) const;
+
 
 
   // convenience:

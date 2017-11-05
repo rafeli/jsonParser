@@ -286,7 +286,22 @@ double jsValue::getDbl(std::string key) const {
   return objectVal.get(key).getDbl();
 }
 
-std::size_t jsValue::size() {
+std::string jsValue::getString(std::size_t index) const {
+  if (type != T_ARRAY) throw_( "indexing string-property from non-array jsonValue");
+  return arrayVal[index].getString();
+}
+
+int jsValue::getInt(std::size_t index) const {
+  if (type != T_ARRAY) throw_( "indexing int-property from non-array jsonValue");
+  return arrayVal[index].getInt();
+}
+
+double jsValue::getDbl(std::size_t index) const {
+  if (type != T_ARRAY) throw_( "indexing double-property from non-array jsonValue");
+  return arrayVal[index].getDbl();
+}
+
+std::size_t jsValue::size() const {
   if (type != T_ARRAY) throw_( "requesting size from non-Array jsonValue");
   return arrayVal.size();
 }
