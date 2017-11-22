@@ -331,6 +331,12 @@ void jsValue::add(jsValue x) {
   arrayVal.push_back(x);
 }
 
+void jsValue::set(std::size_t i, jsValue value_) {
+  if (type != T_ARRAY) throw_( "requesting array element from non-array jsonValue");
+  if (i >= arrayVal.size()) throw_( "array index error");
+  arrayVal[i] = value_;
+}
+
 void jsValue::add(std::string key_, jsValue value_) {
   if (type != T_OBJECT) throw_("adding keyValuePair to non-object jsonValue");
   objectVal.add(key_, value_);

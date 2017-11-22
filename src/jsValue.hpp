@@ -70,6 +70,7 @@ class jsValue {
 
   void add(std::string, jsValue); // add key/value to object
   void set(std::string, jsValue); // set key/value in object, add if non-existent
+  void set(std::size_t, jsValue); // set one value of a jsValue representing an array
 
   int getType() const;
 
