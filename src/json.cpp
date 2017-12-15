@@ -38,19 +38,19 @@ calcxx_driver::error (const std::string& m)
   throw "from jsonParser: " + m;
 }
 
-jsObject getJSONObject(const std::string& m) {
+//momo::jsObject momo::getJSONObject(const std::string& m) {
+//
+//  try {
+//    calcxx_driver driver;
+//    driver.parse(m);
+//    return driver.result.getObject();
+//  } catch (std::string e) {
+//    throw std::string(" reading JSON Object from String:" + e  + "\n" + m);
+//  }
+//
+//}
 
-  try {
-    calcxx_driver driver;
-    driver.parse(m);
-    return driver.result.getObject();
-  } catch (std::string e) {
-    throw std::string(" reading JSON Object from String:" + e  + "\n" + m);
-  }
-
-}
-
-jsValue getJSONValue(const std::string& m) {
+momo::jsValue momo::getJSONValue(const std::string& m) {
   try {
     calcxx_driver driver;
     driver.parse(m);

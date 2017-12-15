@@ -43,10 +43,10 @@ class calcxx_driver;
 %token <bool> FALSE 
 %token <std::string> NUMBER_F 
 %token <std::string> STRING 
-%type  <jsValue> jsonexp
-%type  <jsValue> jsvalue
-%type  <jsValue> jsarray 
-%type  <jsValue> jsobject 
+%type  <momo::jsValue> jsonexp
+%type  <momo::jsValue> jsvalue
+%type  <momo::jsValue> jsarray 
+%type  <momo::jsValue> jsobject 
 
 %printer { yyoutput << $$; } <*>;
 
@@ -61,14 +61,14 @@ class calcxx_driver;
 
 jsonexp : jsvalue {driver.result =std::move($1);};
 
-jsvalue : NUMBER_I    {$$ = *(new jsValue($1));}
-        | MINUS NUMBER_I    {$$ = *(new jsValue(-1*$2));}
-        | TRUE    {$$ = *(new jsValue(1));}
-        | FALSE    {$$ = *(new jsValue(0));}
+jsvalue : NUMBER_I    {$$ = *(new momo::jsValue($1));}
+        | MINUS NUMBER_I    {$$ = *(new momo::jsValue(-1*$2));}
+        | TRUE    {$$ = *(new momo::jsValue(1));}
+        | FALSE    {$$ = *(new momo::jsValue(0));}
         | NUMBER_F    {  // convert string to double to jsValue,
                          // determine precision = $1.length() - 6
                          // based on assumption scientific notation 
-                         $$ = std::move(jsValue(std::stod($1,NULL),$1.length() - 6));
+                         $$ = std::move(momo::jsValue(std::stod($1,NULL),$1.length() - 6));
                       }
         | MINUS NUMBER_F {  
                          // we parse -123  as MINUS 123. This would also be read
@@ -76,28 +76,28 @@ jsvalue : NUMBER_I    {$$ = *(new jsValue($1));}
                          // [-xyz], which is an error, but not recognized as such,
                          // with parser trying to read -xyz as an int, leading to invalid-argument
                          // exception in stod()
-                         $$ = std::move(jsValue(-1*std::stod($2,NULL), $2.length()-6)); 
+                         $$ = std::move(momo::jsValue(-1*std::stod($2,NULL), $2.length()-6)); 
                       }
         | STRING      {
             std::string s =$1.substr(1,$1.size()-2);
-            jsValue v(s, false);  // true = decode from JSON (e.g. \\n to \n)
+            momo::jsValue v(s, false);  // true = decode from JSON (e.g. \\n to \n)
             $$ = std::move(v);}
         | ARRAYOPEN jsarray ARRAYCLOSE    {$$ = std::move($2);}
         | OBJECTOPEN jsobject OBJECTCLOSE {$$ = std::move($2);}
       ;
 
 jsarray : %empty   { 
-                      std::vector<jsValue> stdVector;
+                      std::vector<momo::jsValue> stdVector;
 //                      jsValue jsArray(std::move(stdVector));
-                      jsValue jsArray((stdVector));
+                      momo::jsValue jsArray((stdVector));
                       $$ = std::move(jsArray);
                    }
         | jsvalue  {
-                      std::vector<jsValue> stdVector;
-                      jsValue oneValue($1); 
+                      std::vector<momo::jsValue> stdVector;
+                      momo::jsValue oneValue($1); 
                       stdVector.push_back(std::move(oneValue));
 //                      jsValue jsArray (std::move(stdVector));
-                      jsValue jsArray ((stdVector));
+                      momo::jsValue jsArray ((stdVector));
                       $$ = std::move(jsArray);
                     }
         | jsarray COMMA jsvalue  {
@@ -105,16 +105,16 @@ jsarray : %empty   {
         ;
 
 jsobject : %empty  {
-                      jsObject object_;
+                      momo::jsObject object_;
 //                      jsValue jsObject_(std::move(object_));
-                      jsValue jsObject_((object_));
+                      momo::jsValue jsObject_((object_));
                       $$ = std::move(jsObject_);
                    }
          | STRING COLON jsvalue {
-                      jsObject object_;
+                      momo::jsObject object_;
                       std::string key = $1.substr(1,$1.size()-2);
 //                      jsValue jsObject_(std::move(object_));
-                      jsValue jsObject_((object_));
+                      momo::jsValue jsObject_((object_));
                       jsObject_.add(key,$3);
                       $$ = std::move(jsObject_);
                    }

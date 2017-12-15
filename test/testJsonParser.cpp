@@ -157,7 +157,7 @@ int TestJsonParser::testParseString() {
     expected_= "12";
     testString = "{\"myInt\" : 12}";
     driver.parse(testString);
-    jsObject result = driver.result.getObject();
+    momo::jsObject result = driver.result.getObject();
     actual_ << result.get("myInt")  ; 
 //    actual_ << result.get("myInt") << ", " << result.get("myArray") ; 
     TestTools::report(actual_.str(), expected_, test_); 

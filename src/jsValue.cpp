@@ -1,5 +1,7 @@
 #include "jsValue.hpp"
 
+namespace momo {
+
 // casts char* Exception into std::string
 void throw_(std::string s) { throw s;}
 
@@ -261,12 +263,37 @@ jsValue&  jsValue::getRef(std::size_t i) {
 }
 
 jsValue&  jsValue::getRef(std::string key) {
-
   if (type != T_OBJECT) throw_( "requesting property from non-object jsonValue");
   return objectVal.getRef(key);
 }
 
-bool jsValue::has(std::string key) {
+jsValue jsValue::getObject(std::size_t i) const {
+  if (type != T_ARRAY) throw_( "requesting array element from non-array jsonValue");
+  if (i >= arrayVal.size()) throw_( "array index error");
+  if (arrayVal[i].type != T_OBJECT) throw_("from getObject(i): jsValue at requested index is not an object");
+  return arrayVal[i];
+}
+
+jsValue jsValue::getObject(std::string key) const {
+  if (type != T_OBJECT) throw_( "requesting property from non-object jsonValue");
+  if (objectVal.get(key).type != T_OBJECT) throw_("from getObject(i): jsValue at requested index is not an object");
+  return objectVal.get(key);
+}
+
+jsValue jsValue::getArray(std::size_t i) const {
+  if (type != T_ARRAY) throw_( "requesting array element from non-array jsonValue");
+  if (i >= arrayVal.size()) throw_( "array index error");
+  if (arrayVal[i].type != T_ARRAY) throw_("from getObject(i): jsValue at requested index is not an object");
+  return arrayVal[i];
+}
+
+jsValue jsValue::getArray(std::string key) const {
+  if (type != T_OBJECT) throw_( "requesting property from non-object jsonValue");
+  if (objectVal.get(key).type != T_ARRAY) throw_("from getObject(i): jsValue at requested index is not an object");
+  return objectVal.get(key);
+}
+
+bool jsValue::has(std::string key) const {
   if (type != T_OBJECT) throw_( "testing property from non-object jsonValue");
   return objectVal.has(key);
 }
@@ -306,6 +333,16 @@ std::size_t jsValue::size() const {
   return arrayVal.size();
 }
 
+std::vector<double>  jsValue::getDblArray(std::size_t index) const {
+  if (type != T_ARRAY) throw_( "indexing doubleArray-property from non-array jsonValue");
+  return arrayVal[index].getDblArray();
+}
+
+std::vector<double>  jsValue::getDblArray(std::string key) const {
+  if (type != T_OBJECT) throw_( "requesting doubleArray-property from non-object jsonValue");
+  return objectVal.get(key).getDblArray();
+}
+
 std::vector<double>  jsValue::getDblArray() const {
 
   try {
@@ -318,8 +355,9 @@ std::vector<double>  jsValue::getDblArray() const {
   } catch (std::string s) {
     throw "Constructing double array: " + s;
   }
-
 }
+
+
 
 jsObject jsValue::getObject() const {
   if (type != T_OBJECT) throw_("requesting object from non-object jsonValue");
@@ -395,3 +433,5 @@ std::string jsValue::toXML(const std::string& tagName, int indent) const {
   return s.str();
 
 }
+
+} // end namespace momo

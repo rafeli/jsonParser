@@ -5,8 +5,16 @@
 #include <vector>
 #include <string>
 
+namespace momo {
+
 class jsValue;
 
+/**
+* @brief represents an object (list of key-value-pairs). 
+* Was heavily used in user-code, but I now try to substitue
+* all these uses based on jsValue. If possible I'd like to get
+* rid of jsObject completely
+*/
 class jsObject {
 
   public:
@@ -27,11 +35,13 @@ class jsObject {
 
   void getKeys(std::vector<std::string>& keys) const;
 
-  bool has(std::string);
+  bool has(std::string) const;
 
 
 };
 
 std::ostream& operator<<(std::ostream& os, const jsObject& x);
+
+} // end namespace momo
 
 #endif

@@ -18,7 +18,7 @@ public:
 
   std::map<std::string, int> variables;
 
-  jsValue result;
+  momo::jsValue result;
   // Handling the scanner.
   void scan_begin (std::string, int);
   bool trace_scanning;
@@ -34,8 +34,11 @@ public:
 
 };
 
+namespace momo {
 // added 2016-04-15: easier to use
-jsObject getJSONObject(const std::string&);
+// commented 2017-12-14 jsObject getJSONObject(const std::string&);
 jsValue getJSONValue(const std::string&);
+
+}
 
 #endif // ! CALCXX_DRIVER_HH

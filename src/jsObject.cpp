@@ -1,6 +1,8 @@
 #include "jsObject.hpp"
 #include "jsValue.hpp"
 
+namespace momo {
+
 std::ostream& operator<<(std::ostream& os, const jsObject& x) {
    std::vector<jsValue> v;
 
@@ -49,7 +51,7 @@ jsValue& jsObject::getRef(const std::string& key) {
   return myValues[key];
 }
 
-bool jsObject::has(std::string key) {
+bool jsObject::has(std::string key) const {
   return (myValues.count(key) > 0) ;
 }
 
@@ -59,5 +61,8 @@ void jsObject::getKeys(std::vector<std::string>& keys) const {
       keys.push_back(it->first);
   }
 }
+
+
+} // end namespace momo
 
 
