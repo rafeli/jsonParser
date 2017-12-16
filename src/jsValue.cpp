@@ -19,7 +19,6 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      break;
    case T_STRING:
      os << "\"" << x.getEncodedString() << "\"";
-//     os << "\"" << x.getString() << "\"";
      break;
    case T_ARRAY:
      v = x.getArray();
@@ -41,16 +40,25 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
    return os;
  }
 
+/**
+* @brief produce the JSON-string representing this jsValue.
+* the exact same result is achieved with the <<-operator
+* @code
+*   jsValue x1 = getJSONValue("\"abc\\\"def\"");
+*           x2 = jsValue("abc\"def");  // same thing: x1==x2
+*   std::cout << x1;                   // produces: "abc\"def"
+*   std::cout << x1.stringify();       // produces: "abc\"def"
+*   std::cout << x2;                   // produces: "abc\"def"
+*   std::cout << x2.getString();       // produces: abc"def
+* @endcode
+*
+* @return std::string
+*/
 std::string jsValue::stringify() const{
-//  ss.precision(numDecimals);
-  if (type == T_STRING) { 
-   return "\"" + getEncodedString() + "\"";
-  } else {
-    std::stringstream ss;
-    ss.str("");
-    ss << (*this); 
-    return ss.str();
-  }
+  std::stringstream ss;
+  ss.str("");
+  ss << (*this); 
+  return ss.str();
 }
 
 void jsValue::init() {
@@ -61,23 +69,43 @@ void jsValue::init() {
   stringVal = "";
 }
 
+/**
+* @brief default constructor: constructs jsValue with type 'OBJECT'
+*/
 jsValue::jsValue() {
   init();
   type = T_OBJECT;
 }
 
+/**
+* @brief constructs jsValue with type 'INT'
+*
+* @param v: the integer value that is to be represented
+*/
 jsValue::jsValue(const long &v) {
   init();
   type = T_INT;
   intVal = v;
 }
 
+/**
+* @brief constructs jsValue with type 'INT'
+*
+* @param v: the integer value that is to be represented
+*/
 jsValue::jsValue(const int &v) {
   init();
   type = T_INT;
   intVal = (long) v;
 }
 
+/**
+* @brief constructs jsValue with type 'DOUBLE'
+*
+* @param v: the value that is to be represented
+* @param precision_: number of decimal places, default LOWPRECISION=2
+*                    (FULLPRECISION = 16)
+*/
 jsValue::jsValue(const double &v, int precision_) {
   init();
   type = T_DOUBLE;
@@ -85,6 +113,13 @@ jsValue::jsValue(const double &v, int precision_) {
   dblVal = v;
 }
 
+/**
+* @brief constructs jsValue with type 'STRING'
+*
+* @param s: the string that is to be represented
+* @param encoded: for internal use in parser, should be left to default=false (even
+* though each string is stored encdoded)
+*/
 jsValue::jsValue(const std::string &s, bool encoded) {
    init();
    type = T_STRING;
@@ -92,14 +127,6 @@ jsValue::jsValue(const std::string &s, bool encoded) {
 
   // decode value if it was encoded, this is currently (20171016)
   // only if jsValue is called from json-parser. 
-  // Background is that JSON for a string is the same string enclosed in brackets
-  // , e.g. "abc" for abc and "{\"myString\":\"abc\"}" for the object {"myString":"abc"}
-  // a string like abc"def is represented in cpp as "abc\"def" but I chose to represent all
-  // stringvalues in my json-objects as base64-encoded strings. This seems to solve subtle bugs
-  // in (my use of) bison and handles \n \t very smoothly. The only remaining inconsistency is that
-  // JSON representations of strings must escape contained " whereas the strings dont need to:
-  // readJSONValue() reads JSON-code and expects escaped double-quotes, in cpp e.g.: "abc\\\"def"
-  // jsValue(std::string) reads strings and expects un-escaped, in cpp e.g.: "abc\"def"
   if (encoded) {
     std::size_t pos;
 
@@ -127,6 +154,11 @@ stringVal = b64toa(stringVal);
 
 }
  
+/**
+* @brief constructs jsValue with type ARRAY
+*
+* @param v the vector of jsValues that is represented
+*/
 jsValue::jsValue(const std::vector<jsValue> &v) {
   init();
   type = T_ARRAY;
@@ -134,14 +166,11 @@ jsValue::jsValue(const std::vector<jsValue> &v) {
 }
 
 
-jsValue::jsValue(const jsObject &x) {
-  init();
-  type = T_OBJECT;
-  objectVal = x;
-}
-
-// new Constructors, not needed for parsing but for stringify
-// havent managed this with templates (linker doesnt find specific functions)
+/**
+* @brief constructs jsValue of ARRAY type directly from vector<String>
+*
+* @param v
+*/
 jsValue::jsValue(const std::vector<std::string> &v) {
   init();
   type = T_ARRAY;
@@ -152,6 +181,12 @@ jsValue::jsValue(const std::vector<std::string> &v) {
   }
 }
 
+/**
+* @brief constructs jsValue of ARRAY type directly from vector<double>
+*
+* @param v: vector<double> that is represented
+* @param precision_: number of decimal places on stringifying the doubles
+*/
 jsValue::jsValue(const std::vector<double> &v, int precision_) {
   init();
   type = T_ARRAY;
@@ -162,6 +197,12 @@ jsValue::jsValue(const std::vector<double> &v, int precision_) {
   }
 }
 
+/**
+* @brief constructs jsValue of ARRAY type from vector<long double>
+*
+* @param v
+* @param precision_
+*/
 jsValue::jsValue(const std::vector<long double> &v, int precision_) {
   init();
   type = T_ARRAY;
@@ -173,28 +214,56 @@ jsValue::jsValue(const std::vector<long double> &v, int precision_) {
 }
 
  
+/**
+* @brief constructs jsValue of ARRAY type from vector<String>
+*
+* @param v
+*/
 jsValue::jsValue(const std::vector<long> &v) {
   init();
   type = T_ARRAY;
   arrayVal.clear();
   for (unsigned int i=0; i<v.size(); i++) {
-//    jsValue e(v[i]);
     arrayVal.push_back(jsValue(v[i]));
   }
 }
 
 
 
+/**
+* @brief return an int representing the type of this jsValue, currently:
+*  #define T_UNDEFINED -1
+*  #define T_INT 0
+*  #define T_DOUBLE 1
+*  #define T_STRING 2
+*  #define T_ARRAY 3
+*  #define T_OBJECT 4
+*  TODO: define these as enum
+* @return 
+*/
 int jsValue::getType() const {
   return type;
 }
 
+/**
+* @brief check this is an INTEGER-type jsValue and return its value
+*
+* recommended alternatives: object.getInt(key) and/or array.getInt(index)
+*
+* @return represented value as int
+*/
 int jsValue::getInt() const {
-
   if (type != T_INT) throw_( "requesting int from non-int jsonValue");
   return (intVal);
 }
 
+/**
+* @brief check this is a DOUBLE-type jsValue and return its value
+*
+* recommended alternatives: object.getDbl(key) and/or array.getDbl(index)
+*
+* @return represented value as double 
+*/
 double jsValue::getDbl() const {
   if (type != T_DOUBLE && type != T_INT) throw_("requesting Double from non-dbl jsonValue: " + stringVal);
   if (type == T_DOUBLE) {
@@ -210,10 +279,8 @@ int jsValue::getPrecision() const {
 }
 
 std::string  jsValue::getString() const {
-
   if (type != T_STRING) throw_("requesting string from non-string jsonValue");
   return atob64(stringVal);
-
 }
 
 std::string jsValue::getEncodedString() const {

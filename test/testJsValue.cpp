@@ -199,9 +199,9 @@ int TestJsValue::testArray(){
 
     // -3- (2017) accessing array of objects
     momo::jsValue myObjects(std::vector<momo::jsValue>{});
-    myObjects.add(momo::jsValue(momo::jsObject()));
-    myObjects.add(momo::jsValue(momo::jsObject()));
-    myObjects.add(momo::jsValue(momo::jsObject()));
+    myObjects.add(momo::jsValue());
+    myObjects.add(momo::jsValue());
+    myObjects.add(momo::jsValue());
     myObjects.getRef(1).add("name",momo::jsValue("objB"));
     myObjects.getRef(2).add("name",momo::jsValue("objC"));
     myObjects.getRef(0).add("name",momo::jsValue("objA, not:" + myObjects.getRef(1).getRef("name").getString()));
@@ -345,33 +345,35 @@ int TestJsValue::testConstructors(){
     TestTools::report(false, "Exception in jsValue(std::vector<double>): " + e);
   }
 
-  // -7- construct from jsObject
+  // -7- default constructon as OBJECT
   try {
-    momo::jsObject o;
+    momo::jsValue x, *y = new momo::jsValue(), z;
+
     double a= -1.789E-19;
-    o.add("x",momo::jsValue(a));
-    momo::jsValue x(o), *y = new momo::jsValue(o), z = momo::jsValue(o);
+    x.add("x",momo::jsValue(a));
+    y->add("x",momo::jsValue(a));
+    z = x;
 
     // TODO: implement == for jsValue and jsObject
-    if (x.getObject().get("x").getDbl()==a) {
-       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    if (x.getDbl("x") == a) {
+       TestTools::report("ok", "ok" , "jsValue default constructor");
     } else {
-       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+       TestTools::report("Error:", "" , "jsValue default constructor");
     }
 
-    if (y->getObject().get("x").getDbl()==a) {
-       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    if (y->getDbl("x")==a) {
+       TestTools::report("ok", "ok" , "jsValue default constructor");
     } else {
-       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+       TestTools::report("Error:", "" , "jsValue default constructor");
     }
 
-    if (z.getObject().get("x").getDbl()==a) {
-       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    if (z.getDbl("x")==a) {
+       TestTools::report("ok", "ok" , "jsValue default constructor");
     } else {
-       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+       TestTools::report("Error:", "" , "jsValue default constructor");
     }
   } catch (std::string e) {
-    TestTools::report(false, "Exception in jsValue(std::vector<double>): " + e);
+    TestTools::report(false, "Exception in jsValue default constructor: " + e);
   }
 
   return 15; 

@@ -88,7 +88,6 @@ jsvalue : NUMBER_I    {$$ = *(new momo::jsValue($1));}
 
 jsarray : %empty   { 
                       std::vector<momo::jsValue> stdVector;
-//                      jsValue jsArray(std::move(stdVector));
                       momo::jsValue jsArray((stdVector));
                       $$ = std::move(jsArray);
                    }
@@ -96,7 +95,6 @@ jsarray : %empty   {
                       std::vector<momo::jsValue> stdVector;
                       momo::jsValue oneValue($1); 
                       stdVector.push_back(std::move(oneValue));
-//                      jsValue jsArray (std::move(stdVector));
                       momo::jsValue jsArray ((stdVector));
                       $$ = std::move(jsArray);
                     }
@@ -105,18 +103,22 @@ jsarray : %empty   {
         ;
 
 jsobject : %empty  {
-                      momo::jsObject object_;
-//                      jsValue jsObject_(std::move(object_));
-                      momo::jsValue jsObject_((object_));
-                      $$ = std::move(jsObject_);
+//                      momo::jsObject object_;
+//                      momo::jsValue jsObject_((object_));
+//                      $$ = std::move(jsObject_);
+                        $$ = std::move(momo::jsValue());
                    }
          | STRING COLON jsvalue {
-                      momo::jsObject object_;
+//                      momo::jsObject object_;
+//                      std::string key = $1.substr(1,$1.size()-2);
+//                      momo::jsValue jsObject_((object_));
+//                      jsObject_.add(key,$3);
+//                      $$ = std::move(jsObject_);
+
+                      momo::jsValue myObject;
                       std::string key = $1.substr(1,$1.size()-2);
-//                      jsValue jsObject_(std::move(object_));
-                      momo::jsValue jsObject_((object_));
-                      jsObject_.add(key,$3);
-                      $$ = std::move(jsObject_);
+                      myObject.add(key,$3);
+                      $$ = std::move(myObject);
                    }
          | jsobject COMMA STRING COLON jsvalue {
                       std::string key = $3.substr(1,$3.size()-2);

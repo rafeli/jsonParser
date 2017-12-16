@@ -52,6 +52,10 @@ calcxx_driver::error (const std::string& m)
 
 momo::jsValue momo::getJSONValue(const std::string& m) {
   try {
+    if (m=="") {
+      throw std::string("empty string is not valid JSON"
+       "\n\t use e.g. \"{}\" or \"[]\" for an empty object / array");
+    }
     calcxx_driver driver;
     driver.parse(m);
     return driver.result;

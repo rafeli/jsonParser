@@ -120,9 +120,8 @@ class jsValue {
 
   void init();
 
-
-
   public:
+
 
   jsValue(); // default constructor gives an object-type value
 
@@ -136,7 +135,6 @@ class jsValue {
 //  jsValue(std::vector<jsValue> &&);
 
 
-  jsValue(const jsObject &);
 
   // TODO: implement Compare (?), < , > 
   bool operator == (const jsValue& d) const {
@@ -187,20 +185,21 @@ class jsValue {
   // STRINGIFY
   std::string toXML(const std::string& tagName, int indent=0 ) const;
   std::string stringify() const;
+  friend std::ostream& operator<<(std::ostream& os, const jsValue& x);
 
-
-  // TODO: delete ? 
+  // TODO: delete / mov? 
   std::vector<double> getDblArray() const;
 
-  // TODO: move to private and delete if not needed
+  // I try to avoid these, but still use them e.g. in testV8js
+  std::vector<jsValue> getArray() const;
   int getInt() const;
   double getDbl() const;
   int getPrecision() const;
-  std::vector<jsValue> getArray() const;
-  std::vector<jsValue>& getArrayRef() ;
   jsObject getObject() const;
   std::string getString() const;
   std::string getEncodedString() const;
+  std::vector<jsValue>& getArrayRef() ;
+
 };
 
 std::ostream& operator<<(std::ostream& os, const jsValue& x);
