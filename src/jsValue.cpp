@@ -149,7 +149,7 @@ jsValue::jsValue(const std::string &s, bool encoded) {
   }
 
 // 20171016
-stringVal = b64toa(stringVal);
+stringVal = momo::tools::b64toa(stringVal);
 // end 20171016
 
 }
@@ -280,7 +280,7 @@ int jsValue::getPrecision() const {
 
 std::string  jsValue::getString() const {
   if (type != T_STRING) throw_("requesting string from non-string jsonValue");
-  return atob64(stringVal);
+  return momo::tools::atob64(stringVal);
 }
 
 std::string jsValue::getEncodedString() const {
@@ -288,7 +288,7 @@ std::string jsValue::getEncodedString() const {
   // the counterpart to this encoding is in scanning {doubleQuotedString}
   // as implemented in scanner.l 
 
-  std::string s = atob64(stringVal);
+  std::string s = momo::tools::atob64(stringVal);
   std::size_t pos;
 
   if (type != T_STRING) throw_("requesting string from non-string jsonValue");
