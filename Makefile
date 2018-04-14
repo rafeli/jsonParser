@@ -6,7 +6,8 @@ INCLUDES = -I ~/local/include
 
 TESTSRCS := $(wildcard test/*.cpp)
 TESTOBJS := $(TESTSRCS:.cpp=.o)
-OBJS     := src/jsValue.o
+SRCS := $(wildcard src/*.cpp)
+OBJS := $(SRCS:.cpp=.o)
 
 all : test/testRunner
 
@@ -20,8 +21,8 @@ test/testRunner : install $(OBJS) $(TESTOBJS)
 test/%.o: test/%.cpp test/%.hpp
 	$(CC) -o $@ -c $(INCLUDES) $(CFLAGS) $<
 
-src/jsValue.o: src/jsValue.cpp src/jsValue.hpp
-	cd src; $(CC) $(INCLUDES) $(CFLAGS) -c jsValue.cpp
+src/%.o: src/%.cpp src/%.hpp
+	$(CC) -o $@ -c $(INCLUDES) $(CFLAGS) $<
 
 
 clean:

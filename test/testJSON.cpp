@@ -34,24 +34,54 @@ int TestJSON::testParse() {
   MYLOG(DEBUG,"ENTER");
 
   // -1- int positive and negative
-  test_ = "positive integer";
   try {
-    testString = "12345";
+
+    test_ = "integer";
+    testString = "123456789";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.stringify(), testString, test_); 
+
+    testString = "-11";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(jsValue.stringify(), testString, test_); 
+
+    testString = " -1 ";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(jsValue.getInt(), -1, test_); 
+
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s;
   }
 
-//  // -2- negative int
-//  test_ = "negative integer";
-//  try {
-//    testString = "-11";
-//    driver.parse(testString);
-//    momo::TestTools::report(driver.result.stringify(), testString, test_); 
-//  } catch (std::string s) {
-//    std::cout << "ERROR in " << test_ <<": " << s;
-//  }
+  // -1- incorrect integers
+  try {
+    testString = "1 1";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(false, "didn't recognize as error: 1 1"); 
+  } catch (std::string e) {
+    momo::TestTools::report(e, "JSON::parse unexpected: 1", test_); 
+  }
+
+  // -2- doubles 
+  try {
+
+    test_ = "double";
+    testString = "12.3456789";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(jsValue.stringify(), "1.23456789e+01", test_); 
+
+    testString = "-11E05";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(jsValue.stringify(), "-1.1e+06", test_); 
+
+    testString = " -0.0012E-002 ";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(jsValue.stringify(), "-1.2e-05", test_); 
+
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s;
+  }
+
 //
 //  // -3- just a string
 //  try {
