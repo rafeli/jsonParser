@@ -57,7 +57,7 @@ int TestJSON::testParse() {
     std::cout << "ERROR in " << test_ <<": " << s;
   }
 
-  // -1- incorrect integers
+  // -1a- incorrect integers
   try {
     testString = "1 1";
     jsValue = json.parse(testString);
@@ -88,6 +88,34 @@ int TestJSON::testParse() {
 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s;
+  }
+
+  // -2a- incorrect doubles
+  try {
+    testString = "A1";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(false, "didn't recognize as error: A1"); 
+  } catch (std::string e) {
+    momo::TestTools::report(e, "??", test_); 
+    numTests++;
+  }
+
+  try {
+    testString = "1.A1";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(false, "didn't recognize as error: A1"); 
+  } catch (std::string e) {
+    momo::TestTools::report(e, "??", test_); 
+    numTests++;
+  }
+
+  try {
+    testString = "1.2E";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(false, "didn't recognize as error: A1"); 
+  } catch (std::string e) {
+    momo::TestTools::report(e, "??", test_); 
+    numTests++;
   }
 
 //
