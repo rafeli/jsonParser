@@ -116,11 +116,6 @@ class jsValue {
 
   void init();
 
-  // access with type-check, used by public getXYZ() functions:
-  int getInt() const;
-  double getDbl() const;
-  std::string getString() const;
-  std::vector<double> getDblArray() const;
 
   public:
 
@@ -130,9 +125,12 @@ class jsValue {
   jsValue(const long &);
   jsValue(const int &);
   jsValue(const double &, int precision = LOWPRECISION);
-  jsValue(const std::string &, bool encoded = false); // TODO: encoded=true no longer required ?!!
+  jsValue(const std::string &, bool encoded = false); // TODO: check uses ?
   jsValue(const std::vector<jsValue> &);
 // the following allowed e.g. jsValue x = y; with y a std::vector<jsValue>
+
+
+
 // without we now need: jsValule x = jsValue(y); which is clearer to me
 //  jsValue(std::vector<jsValue> &&);
 
@@ -166,7 +164,7 @@ class jsValue {
   jsValue getArray(std::size_t index) const;
   jsValue getArray(std::string key) const;
 
-  // READING JSVALUE INTO C++ primitive types
+  // READING ELEMENTS OF OBJECT/ARRAY-TYPE JSVALUE INTO C++ primitive types
   std::string getString(std::size_t index) const { return get(index).getString();}
   std::string getString(std::string key) const { return get(key).getString();}
   int getInt(std::size_t index) const { return get(index).getInt();}
@@ -175,6 +173,12 @@ class jsValue {
   double getDbl(std::string key) const {return get(key).getDbl();}
   std::vector<double> getDblArray(std::string key) const {return get(key).getDblArray();};
   std::vector<double> getDblArray(std::size_t index) const {return get(index).getDblArray();};
+
+  // CONVERTING JSVALUE primitive types INTO C++ primitive types
+  int getInt() const;
+  double getDbl() const;
+  std::string getString() const;
+  std::vector<double> getDblArray() const;
 
   // WRITING C++ INTO JSVALUE
   void add(jsValue);              // add to array

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "testJsonParser.hpp"
+#include "testJSON.hpp"
 #include "testJsValue.hpp"
 #include "momo/testTools.hpp"
 #include "momo/logging.hpp"
@@ -17,16 +17,16 @@ int main(int argc, char ** argv) {
   if (argc==2) {
     logFileName = argv[1];
   }
-  TestTools::prepare(logFileName);
+  momo::TestTools::prepare(logFileName);
 
   // -2- test each unit
-  TestJsonParser testJsonParser;
-  numTests += testJsonParser.testAll();
+  TestJSON testJSON;
+  numTests += testJSON.testAll();
   TestJsValue testJsValue;
   numTests += testJsValue.testAll();
 
   // -3- finalize
-  TestTools::testingComplete();
+  momo::TestTools::testingComplete();
   std::cout << numTests << " tests finished \n";
 
 }

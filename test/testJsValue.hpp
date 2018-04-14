@@ -4,11 +4,11 @@
 #include "momo/testTools.hpp"
 #include "momo/logging.hpp"
 #include "../src/jsValue.hpp"
-#include "../src/json.hpp"
 
 class TestJsValue {
 
 private:
+
   std::ofstream *logStream;
 
 public:
@@ -30,7 +30,6 @@ public:
   int testObject();
 
   int testConstructors();
-
 
 };
 

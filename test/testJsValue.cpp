@@ -6,7 +6,7 @@ TestJsValue::TestJsValue(){
    // -0- init 
 
    // -1- request logstream
-   logStream = TestTools::getLogStream();
+   logStream = momo::TestTools::getLogStream();
    
 }
 
@@ -62,64 +62,68 @@ int TestJsValue::testString(){
     jsPlain = momo::jsValue(plain); jsQuote = momo::jsValue(quote); jsEscQuote = momo::jsValue(escQuote);
     jsBackSlash = momo::jsValue(backSlash); jsLinebreak = momo::jsValue(linebreak);
 
-    TestTools::report(jsPlain.getString(), plain, "jsValue(ab@cd).getString()");
-    TestTools::report(jsQuote.getString(),  quote , "jsValue(ab\"cd).getString()");
-    TestTools::report(jsBackSlash.getString(),  backSlash , "jsValue(ab\\cd).getString()");
-    TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(ab\\\"cd).getString()");
-    TestTools::report(jsLinebreak.getString(), linebreak, "jsValue(ab\\ncd).getString()");
+    momo::TestTools::report(jsPlain.getString(), plain, "jsValue(ab@cd).getString()");
+    momo::TestTools::report(jsQuote.getString(),  quote , "jsValue(ab\"cd).getString()");
+    momo::TestTools::report(jsBackSlash.getString(),  backSlash , "jsValue(ab\\cd).getString()");
+    momo::TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(ab\\\"cd).getString()");
+    momo::TestTools::report(jsLinebreak.getString(), linebreak, "jsValue(ab\\ncd).getString()");
 
-    TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(ab@cd).stringify()");
-    TestTools::report(jsQuote.stringify(),  quoteJSON , "jsValue(ab\"cd).stringify()");
-    TestTools::report(jsBackSlash.stringify(), backSlashJSON , "jsValue(ab\\cd).stringify()");
-    TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(ab\\\"cd).stringify()");
-    TestTools::report(jsLinebreak.stringify(), linebreakJSON, "jsValue(ab\\ncd).stringify()");
+    momo::TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(ab@cd).stringify()");
+    momo::TestTools::report(jsQuote.stringify(),  quoteJSON , "jsValue(ab\"cd).stringify()");
+    momo::TestTools::report(jsBackSlash.stringify(), backSlashJSON , "jsValue(ab\\cd).stringify()");
+    momo::TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(ab\\\"cd).stringify()");
+    momo::TestTools::report(jsLinebreak.stringify(), linebreakJSON, "jsValue(ab\\ncd).stringify()");
 
-    // -3- same with getJSONValue
-    jsPlain = momo::getJSONValue(plainJSON); jsQuote = momo::getJSONValue(quoteJSON); 
-    jsEscQuote = momo::getJSONValue(escQuoteJSON); jsBackSlash = momo::getJSONValue(backSlashJSON);
-    jsLinebreak = momo::getJSONValue(linebreakJSON);
+//    // -3- same with getJSONValue
+//    // TODO: move to testJSON::testParse
+//    jsPlain = momo::getJSONValue(plainJSON); jsQuote = momo::getJSONValue(quoteJSON); 
+//    jsEscQuote = momo::getJSONValue(escQuoteJSON); jsBackSlash = momo::getJSONValue(backSlashJSON);
+//    jsLinebreak = momo::getJSONValue(linebreakJSON);
+//
+//    momo::TestTools::report(jsPlain.getString(), plain, "jsValue(ab@cd).getString()");
+//    momo::TestTools::report(jsQuote.getString(),  quote , "jsValue(ab\"cd).getString()");
+//    momo::TestTools::report(jsBackSlash.getString(),  backSlash , "jsValue(ab\\cd).getString()");
+//    momo::TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(ab\\\"cd).getString()");
+//    momo::TestTools::report(jsLinebreak.getString(), linebreak, "jsValue(ab\\ncd).getString()");
+//
+//    momo::TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(ab@cd).stringify()");
+//    momo::TestTools::report(jsQuote.stringify(),  quoteJSON , "jsValue(ab\"cd).stringify()");
+//    momo::TestTools::report(jsBackSlash.stringify(), backSlashJSON , "jsValue(ab\\cd).stringify()");
+//    momo::TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(ab\\\"cd).stringify()");
+//    momo::TestTools::report(jsLinebreak.stringify(), linebreakJSON, "jsValue(ab\\ncd).stringify()");
+//
 
-    TestTools::report(jsPlain.getString(), plain, "jsValue(ab@cd).getString()");
-    TestTools::report(jsQuote.getString(),  quote , "jsValue(ab\"cd).getString()");
-    TestTools::report(jsBackSlash.getString(),  backSlash , "jsValue(ab\\cd).getString()");
-    TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(ab\\\"cd).getString()");
-    TestTools::report(jsLinebreak.getString(), linebreak, "jsValue(ab\\ncd).getString()");
 
-    TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(ab@cd).stringify()");
-    TestTools::report(jsQuote.stringify(),  quoteJSON , "jsValue(ab\"cd).stringify()");
-    TestTools::report(jsBackSlash.stringify(), backSlashJSON , "jsValue(ab\\cd).stringify()");
-    TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(ab\\\"cd).stringify()");
-    TestTools::report(jsLinebreak.stringify(), linebreakJSON, "jsValue(ab\\ncd).stringify()");
 
-    // -4- tests on incorrect strings
-    try {
-      momo::getJSONValue("a\\b").getString();
-      TestTools::report(std::string("a\\b incorrect"), momo::getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
-    } catch (std::string s) {
-      TestTools::report("a\\b no JSON", "a\\b no JSON", "getJSONValue(non-json)");
-    }
-
-    try {
-      momo::getJSONValue("a\"b").getString();
-      TestTools::report(std::string("a\"b incorrect"), momo::getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
-    } catch (std::string s) {
-      TestTools::report("a\"b no JSON", "a\"b no JSON", "getJSONValue(non-json)");
-    }
-
-    try {
-      momo::getJSONValue("a\\\\\"b").getString();
-      TestTools::report(std::string("a\\\\\"b incorrect"), momo::getJSONValue("a\\\\\"b").getString(), "getJSONValue(non-json)");
-    } catch (std::string s) {
-      TestTools::report("a\\\\\"b no JSON", "a\\\\\"b no JSON", "getJSONValue(non-json)");
-    }
-
-    // ???
-    MYLOG(DEBUG, "EXIT");
-  } 
-  catch(std::string s) {
-    TestTools::report(false, "exception in testString: " + s);
-    std::cout << "Exception thrown in testString: " << s << std::endl;
-  }
+//     // -4- tests on incorrect strings
+//     // TODO: check
+//     try {
+//       momo::getJSONValue("a\\b").getString();
+//       momo::TestTools::report(std::string("a\\b incorrect"), momo::getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
+//     } catch (std::string s) {
+//       momo::TestTools::report("a\\b no JSON", "a\\b no JSON", "getJSONValue(non-json)");
+//     }
+// 
+//     try {
+//       momo::getJSONValue("a\"b").getString();
+//       momo::TestTools::report(std::string("a\"b incorrect"), momo::getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
+//     } catch (std::string s) {
+//       momo::TestTools::report("a\"b no JSON", "a\"b no JSON", "getJSONValue(non-json)");
+//     }
+// 
+//     try {
+//       momo::getJSONValue("a\\\\\"b").getString();
+//       momo::TestTools::report(std::string("a\\\\\"b incorrect"), momo::getJSONValue("a\\\\\"b").getString(), "getJSONValue(non-json)");
+//     } catch (std::string s) {
+//       momo::TestTools::report("a\\\\\"b no JSON", "a\\\\\"b no JSON", "getJSONValue(non-json)");
+//     }
+// 
+//     // ???
+//     MYLOG(DEBUG, "EXIT");
+   } catch(std::string s) {
+     momo::TestTools::report(false, "exception in testString: " + s);
+     std::cout << "Exception thrown in testString: " << s << std::endl;
+   }
 
   return 20;
 }
@@ -140,7 +144,7 @@ int TestJsValue::testInt(){
     actual_.str("");
     expected_ = "\"abcd\"17";
     actual_ <<  stringVal << intVal ;
-    TestTools::report(actual_.str(), expected_, test_);
+    momo::TestTools::report(actual_.str(), expected_, test_);
 
     // ???
     MYLOG(DEBUG, "EXIT");
@@ -174,7 +178,7 @@ int TestJsValue::testArray(){
     actual_.str("");
     expected_ = "[17, \"abcd\"]";
     actual_ <<  arrayVal ;
-    TestTools::report(actual_.str(), expected_, test_);
+    momo::TestTools::report(actual_.str(), expected_, test_);
     numTests++;
 
     // -2- test read CPP Array into JSON
@@ -194,7 +198,7 @@ int TestJsValue::testArray(){
     momo::jsValue x3(dblVector, 5); // 5 = precision
     std::string x3s = x3.stringify();
     actual_ <<  x1 << x2 << x3s ;
-    TestTools::report(actual_.str(), expected_, test_);
+    momo::TestTools::report(actual_.str(), expected_, test_);
     numTests++;
 
     // -3- (2017) accessing array of objects
@@ -205,7 +209,7 @@ int TestJsValue::testArray(){
     myObjects.getRef(1).add("name",momo::jsValue("objB"));
     myObjects.getRef(2).add("name",momo::jsValue("objC"));
     myObjects.getRef(0).add("name",momo::jsValue("objA, not:" + myObjects.getRef(1).getRef("name").getString()));
-    TestTools::report(myObjects.getRef(0).getRef("name").getString(), "objA, not:objB", test_);
+    momo::TestTools::report(myObjects.getRef(0).getRef("name").getString(), "objA, not:objB", test_);
     numTests++;
     
 
@@ -244,7 +248,7 @@ int TestJsValue::testObject(){
     actual_.str("");
     expected_ = "{\"myDouble\":1.1700000000000000e+03, \"myInt\":17, \"myString\":\"abcd\", \"myVector\":[17, \"abcd\", 1.1700000000000000e+03]}";
     actual_ <<  myObject ;
-    TestTools::report(actual_.str(), expected_, test_);
+    momo::TestTools::report(actual_.str(), expected_, test_);
 
 
     // ???
@@ -264,12 +268,12 @@ int TestJsValue::testConstructors(){
     momo::jsValue x(a), *y = new momo::jsValue(b), z = momo::jsValue(c);
 
     if (x.getInt() == a && y->getInt()==b && z.getInt() == c) {
-       TestTools::report("ok", "ok" , "jsValue(int)");
+       momo::TestTools::report("ok", "ok" , "jsValue(int)");
     } else {
-       TestTools::report("Error:", "" , "jsValue(int)");
+       momo::TestTools::report("Error:", "" , "jsValue(int)");
     }
   } catch (std::string e) {
-    TestTools::report(false , "Exception in jsValue(int): " + e);
+    momo::TestTools::report(false , "Exception in jsValue(int): " + e);
   }
 
   // -2- construct from string
@@ -278,12 +282,12 @@ int TestJsValue::testConstructors(){
     momo::jsValue x(a), *y = new momo::jsValue(b), z = momo::jsValue(c);
 
     if (x.getString() == a && y->getString()==b && z.getString() == c) {
-       TestTools::report("ok", "ok" , "jsValue(string)");
+       momo::TestTools::report("ok", "ok" , "jsValue(string)");
     } else {
-       TestTools::report("Error:", "" , "jsValue(string)");
+       momo::TestTools::report("Error:", "" , "jsValue(string)");
     }
   } catch (std::string e) {
-    TestTools::report(false , "Exception in jsValue(string): " + e);
+    momo::TestTools::report(false , "Exception in jsValue(string): " + e);
   }
 
   // -3- construct from double
@@ -292,12 +296,12 @@ int TestJsValue::testConstructors(){
     momo::jsValue x(a), *y = new momo::jsValue(b), z = momo::jsValue(c);
 
     if (x.getDbl() == a && y->getDbl()==b && z.getDbl() == c) {
-       TestTools::report("ok", "ok" , "jsValue(double)");
+       momo::TestTools::report("ok", "ok" , "jsValue(double)");
     } else {
-       TestTools::report("Error:", "" , "jsValue(double)");
+       momo::TestTools::report("Error:", "" , "jsValue(double)");
     }
   } catch (std::string e) {
-    TestTools::report(false , "Exception in jsValue(double): " + e);
+    momo::TestTools::report(false , "Exception in jsValue(double): " + e);
   }
 
   // -4- construct from std::vector<double>
@@ -306,13 +310,13 @@ int TestJsValue::testConstructors(){
     std::vector<double> myVector = {a,b,c};
     momo::jsValue x(myVector), *y = new momo::jsValue(myVector), z = momo::jsValue(myVector);
 
-    if (x.getArray()[0].getDbl()==a && y->getArray()[1].getDbl()==b && z.getArray()[2].getDbl()==c) {
-       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    if (x.getDbl(0)==a && y->getDbl(1)==b && z.getDbl(2)==c) {
+       momo::TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
     } else {
-       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+       momo::TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
     }
   } catch (std::string e) {
-    TestTools::report(false , "Exception in jsValue(std::vector<double>): " + e);
+    momo::TestTools::report(false , "Exception in jsValue(std::vector<double>): " + e);
   }
 
   // -5- construct from std::vector<string>
@@ -321,13 +325,13 @@ int TestJsValue::testConstructors(){
     std::vector<std::string> myVector = {a,b,c};
     momo::jsValue x(myVector), *y = new momo::jsValue(myVector), z = momo::jsValue(myVector);
 
-    if (x.getArray()[0].getString()==a && y->getArray()[1].getString()==b && z.getArray()[2].getString()==c) {
-       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    if (x.getString(0)==a && y->getString(1)==b && z.getString(2)==c) {
+       momo::TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
     } else {
-       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+       momo::TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
     }
   } catch (std::string e) {
-    TestTools::report(false , "Exception in jsValue(std::vector<double>): " + e);
+    momo::TestTools::report(false , "Exception in jsValue(std::vector<double>): " + e);
   }
 
   // -6- construct from std::vector<jsValue>
@@ -336,13 +340,13 @@ int TestJsValue::testConstructors(){
     std::vector<momo::jsValue> myVector = {momo::jsValue(a),momo::jsValue(b),momo::jsValue(c)};
     momo::jsValue x(myVector), *y = new momo::jsValue(myVector), z = momo::jsValue(myVector);
 
-    if (x.getArray()[0].getDbl()==a && y->getArray()[1].getDbl()==b && z.getArray()[2].getDbl()==c) {
-       TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
+    if (x.getDbl(0)==a && y->getDbl(1)==b && z.getDbl(2)==c) {
+       momo::TestTools::report("ok", "ok" , "jsValue(std::vector<double>)");
     } else {
-       TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
+       momo::TestTools::report("Error:", "" , "jsValue(std::vector<double>)");
     }
   } catch (std::string e) {
-    TestTools::report(false, "Exception in jsValue(std::vector<double>): " + e);
+    momo::TestTools::report(false, "Exception in jsValue(std::vector<double>): " + e);
   }
 
   // -7- default constructon as OBJECT
@@ -356,24 +360,24 @@ int TestJsValue::testConstructors(){
 
     // TODO: implement == for jsValue and jsObject
     if (x.getDbl("x") == a) {
-       TestTools::report("ok", "ok" , "jsValue default constructor");
+       momo::TestTools::report("ok", "ok" , "jsValue default constructor");
     } else {
-       TestTools::report("Error:", "" , "jsValue default constructor");
+       momo::TestTools::report("Error:", "" , "jsValue default constructor");
     }
 
     if (y->getDbl("x")==a) {
-       TestTools::report("ok", "ok" , "jsValue default constructor");
+       momo::TestTools::report("ok", "ok" , "jsValue default constructor");
     } else {
-       TestTools::report("Error:", "" , "jsValue default constructor");
+       momo::TestTools::report("Error:", "" , "jsValue default constructor");
     }
 
     if (z.getDbl("x")==a) {
-       TestTools::report("ok", "ok" , "jsValue default constructor");
+       momo::TestTools::report("ok", "ok" , "jsValue default constructor");
     } else {
-       TestTools::report("Error:", "" , "jsValue default constructor");
+       momo::TestTools::report("Error:", "" , "jsValue default constructor");
     }
   } catch (std::string e) {
-    TestTools::report(false, "Exception in jsValue default constructor: " + e);
+    momo::TestTools::report(false, "Exception in jsValue default constructor: " + e);
   }
 
   return 15; 

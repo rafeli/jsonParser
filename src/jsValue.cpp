@@ -6,7 +6,6 @@ namespace momo {
 void throw_(std::string s) { throw s;}
 
 std::ostream& operator<<(std::ostream& os, const jsValue& x) {
-   std::vector<jsValue> v;
 
    // -1- stream depd. on type (recursive for array and object)
    switch (x.getType()) {
@@ -21,11 +20,10 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      os << "\"" << x.getEncodedString() << "\"";
      break;
    case T_ARRAY:
-     v = x.getArray();
      os << "[";
-     if (v.size()>0) os << v[0];
-     for (unsigned int i=1; i<v.size(); i++) {
-       os << ", " << v[i] ;
+     if (x.arrayVal.size()>0) os << x.arrayVal[0];
+     for (unsigned int i=1; i<x.arrayVal.size(); i++) {
+       os << ", " << x.arrayVal[i] ;
      }
      os << "]";
      break;
@@ -445,15 +443,16 @@ std::size_t jsValue::size() const {
 
 std::vector<double>  jsValue::getDblArray() const {
 
+  if (type != T_ARRAY) throw_( "requesting double array from non-Array jsonValue");
+  unsigned int i;
   try {
-    std::vector<jsValue> v = getArray();
     std::vector<double> x;
-    for (unsigned int i=0; i<v.size(); i++) {
-       x.push_back(v[i].getDbl()) ;
+    for (i=0; i<arrayVal.size(); i++) {
+       x.push_back(arrayVal[i].getDbl()) ;
      }
     return x;
   } catch (std::string s) {
-    throw "Constructing double array: " + s;
+    throw "jsValue::getDblArray() : " + s + "\nat index: " + std::to_string(i);
   }
 }
 
@@ -524,9 +523,8 @@ std::string jsValue::toXML(const std::string& tagName, int indent) const {
     s << lCloseT << tagName << ">"; 
   break;
   case T_ARRAY:
-    myArray = getArray();
-    for (std::size_t i=0; i<myArray.size(); i++) {
-       s << myArray[i].toXML(tagName, indent );  
+    for (std::size_t i=0; i<arrayVal.size(); i++) {
+       s << arrayVal[i].toXML(tagName, indent );  
     }
   break;
   case T_STRING:
