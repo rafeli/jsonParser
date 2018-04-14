@@ -30,7 +30,12 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      os << "]";
      break;
    case T_OBJECT:
-     os << x.getObject();
+//     os << x.getObject();
+     os << "{" ;
+     for (auto it=x.objectVal.begin(); it!=x.objectVal.end(); ++it) {
+      os << (it==x.objectVal.begin() ? "" : ", ") <<  "\"" << it->first <<  "\":" << it->second;
+     }
+     os << "}";
      break;
    default:
      throw_("streaming unimplemented value type");
@@ -313,101 +318,129 @@ std::string jsValue::getEncodedString() const {
 
 }
 
-std::vector<jsValue>  jsValue::getArray() const {
-  if (type != T_ARRAY) throw_( "requesting array from non-array jsonValue");
-  return arrayVal;
-}
+// commented out april 2018: doesnt seem consistent to provide a copy
+// of the implementation. If anything, this should be called jsValue_to_stdVector 
+//
+//std::vector<jsValue>  jsValue::getArray() const {
+//  if (type != T_ARRAY) throw_( "requesting array from non-array jsonValue");
+//  return arrayVal;
+//}
+//
+//std::vector<jsValue>&  jsValue::getArrayRef() {
+//  if (type != T_ARRAY) throw_( "requesting array from non-array jsonValue");
+//  return arrayVal;
+//}
 
-std::vector<jsValue>&  jsValue::getArrayRef() {
-  if (type != T_ARRAY) throw_( "requesting array from non-array jsonValue");
-  return arrayVal;
-}
 
+/**
+* @brief provide a non-const ref to the i-th element of an Array-type jsValue
+*
+* @param i: the requested index
+* @throw if this is not an array or if index too high
+*
+* @return a reference to the jsValue at index=i 
+*/
 jsValue&  jsValue::getRef(std::size_t i) {
   if (type != T_ARRAY) throw_( "requesting array element from non-array jsonValue");
   if (i >= arrayVal.size()) throw_( "array index error");
   return arrayVal[i];
 }
 
+/**
+* @brief provide a non-const ref to an object element
+*
+* @param key: the key for this element
+*
+* @return a reference to the jsValue corresponding to this key
+*/
 jsValue&  jsValue::getRef(std::string key) {
   if (type != T_OBJECT) throw_( "requesting property from non-object jsonValue");
-  return objectVal.getRef(key);
+  if (objectVal.count(key) == 0) throw "requesting unknown field from jsObject: " + key ;
+  return objectVal[key];
 }
 
-jsValue jsValue::getObject(std::size_t i) const {
+/**
+* @brief provide a const (TODO: why?)  copy of the i-th element of an Array-type jsValue
+*
+* @param i: the requested index
+* @throw if this is not an array or if index too high
+*
+* @return a copy of the jsValue at index=i
+*/
+const jsValue jsValue::get(std::size_t i) const {
   if (type != T_ARRAY) throw_( "requesting array element from non-array jsonValue");
   if (i >= arrayVal.size()) throw_( "array index error");
-  if (arrayVal[i].type != T_OBJECT) throw_("from getObject(i): jsValue at requested index is not an object");
   return arrayVal[i];
 }
 
-jsValue jsValue::getObject(std::string key) const {
+/**
+* @brief provide a const (TODO: why?)  copy of an object element
+*
+* @param key: the key for which the element is requested
+*
+* @return a copy of the jsValue corresonding to this key 
+*/
+const jsValue jsValue::get(const std::string& key) const {
+
+  // checks
   if (type != T_OBJECT) throw_( "requesting property from non-object jsonValue");
-  if (objectVal.get(key).type != T_OBJECT) throw_("from getObject(i): jsValue at requested index is not an object");
-  return objectVal.get(key);
+  if (objectVal.count(key) == 0) throw "requesting unknown field from jsObject: " + key ;
+
+  // return:  std::map.at(key) has const and non-const variants and will here choose const
+  // the []-operator is always non-const and cannot be used here
+  return objectVal.at(key); 
+
+}
+
+/**
+* @brief provide a copy of the i-th element of an Array-type jsValue
+*        which must be of object-type
+*
+* @param i
+*
+* @return 
+*/
+jsValue jsValue::getObject(std::size_t i) const {
+  jsValue v = get(i);
+  if (v.type != T_OBJECT) throw_("from getObject(i): jsValue at requested index is not an object");
+  return v;
+}
+
+/**
+* @brief provide a const (TODO: why?)  copy of an object element
+*        which must be of object-type itself
+*
+* @param key
+*
+* @return 
+*/
+jsValue jsValue::getObject(std::string key) const {
+  jsValue v = get(key);
+  if (v.type != T_OBJECT) throw_("from getObject(i): jsValue at requested index is not an object");
+  return v;
 }
 
 jsValue jsValue::getArray(std::size_t i) const {
-  if (type != T_ARRAY) throw_( "requesting array element from non-array jsonValue");
-  if (i >= arrayVal.size()) throw_( "array index error");
-  if (arrayVal[i].type != T_ARRAY) throw_("from getObject(i): jsValue at requested index is not an object");
-  return arrayVal[i];
+  jsValue v = get(i);
+  if (v.type != T_ARRAY) throw_("from getObject(i): jsValue at requested index is not an object");
+  return v;
 }
 
 jsValue jsValue::getArray(std::string key) const {
   if (type != T_OBJECT) throw_( "requesting property from non-object jsonValue");
-  if (objectVal.get(key).type != T_ARRAY) throw_("from getObject(i): jsValue at requested index is not an object");
-  return objectVal.get(key);
+  if (get(key).type != T_ARRAY) throw_("from getArray(i): jsValue at requested index is not an array");
+  return get(key);
 }
 
 bool jsValue::has(std::string key) const {
   if (type != T_OBJECT) throw_( "testing property from non-object jsonValue");
-  return objectVal.has(key);
+  return objectVal.count(key) > 0;
 }
 
-std::string jsValue::getString(std::string key) const {
-  if (type != T_OBJECT) throw_( "getting string-property from non-object jsonValue");
-  return objectVal.get(key).getString();
-}
-
-int jsValue::getInt(std::string key) const {
-  if (type != T_OBJECT) throw_( "getting int-property from non-object jsonValue");
-  return objectVal.get(key).getInt();
-}
-
-double jsValue::getDbl(std::string key) const {
-  if (type != T_OBJECT) throw_( "getting double-property from non-object jsonValue");
-  return objectVal.get(key).getDbl();
-}
-
-std::string jsValue::getString(std::size_t index) const {
-  if (type != T_ARRAY) throw_( "indexing string-property from non-array jsonValue");
-  return arrayVal[index].getString();
-}
-
-int jsValue::getInt(std::size_t index) const {
-  if (type != T_ARRAY) throw_( "indexing int-property from non-array jsonValue");
-  return arrayVal[index].getInt();
-}
-
-double jsValue::getDbl(std::size_t index) const {
-  if (type != T_ARRAY) throw_( "indexing double-property from non-array jsonValue");
-  return arrayVal[index].getDbl();
-}
 
 std::size_t jsValue::size() const {
   if (type != T_ARRAY) throw_( "requesting size from non-Array jsonValue");
   return arrayVal.size();
-}
-
-std::vector<double>  jsValue::getDblArray(std::size_t index) const {
-  if (type != T_ARRAY) throw_( "indexing doubleArray-property from non-array jsonValue");
-  return arrayVal[index].getDblArray();
-}
-
-std::vector<double>  jsValue::getDblArray(std::string key) const {
-  if (type != T_OBJECT) throw_( "requesting doubleArray-property from non-object jsonValue");
-  return objectVal.get(key).getDblArray();
 }
 
 std::vector<double>  jsValue::getDblArray() const {
@@ -426,10 +459,10 @@ std::vector<double>  jsValue::getDblArray() const {
 
 
 
-jsObject jsValue::getObject() const {
-  if (type != T_OBJECT) throw_("requesting object from non-object jsonValue");
-  return objectVal;
-}
+//jsObject jsValue::getObject() const {
+//  if (type != T_OBJECT) throw_("requesting object from non-object jsonValue");
+//  return objectVal;
+//}
 
 void jsValue::add(jsValue x) {
   if (type != T_ARRAY) throw_("adding element to non-array jsonValue");
@@ -442,15 +475,31 @@ void jsValue::set(std::size_t i, jsValue value_) {
   arrayVal[i] = value_;
 }
 
-void jsValue::add(std::string key_, jsValue value_) {
+void jsValue::add(std::string key, jsValue val) {
   if (type != T_OBJECT) throw_("adding keyValuePair to non-object jsonValue");
-  objectVal.add(key_, value_);
+  if (has(key)) throw std::string("adding key-value for existing key " + key + ", you may want to use set?");
+  objectVal.insert(std::pair<std::string, jsValue>(key,val));
+//  objectVal.add(key_, value_);
 }
 
-void jsValue::set(std::string key_, jsValue value_) {
+void jsValue::set(std::string key, jsValue val) {
   if (type != T_OBJECT) throw_("setting keyValuePair in non-object jsonValue");
-  objectVal.set(key_, value_);
+  if (has(key)) {
+    objectVal[key] = val;
+  } else {
+    objectVal.insert(std::pair<std::string, jsValue>(key,val));
+  }
+//  objectVal.set(key_, value_);
 }
+
+void jsValue::getKeys(std::vector<std::string>& keys) const {
+
+  if (type != T_OBJECT) throw_("requesting keys for non-object jsonValue");
+  for (auto it=objectVal.begin(); it != objectVal.end(); it++) {
+      keys.push_back(it->first);
+  }
+}
+
 
 std::string jsValue::toXML(const std::string& tagName, int indent) const {
 
@@ -468,9 +517,9 @@ std::string jsValue::toXML(const std::string& tagName, int indent) const {
   switch (getType()) {
   case T_OBJECT:
     s << lStartT << tagName << ">" ;
-    getObject().getKeys(keys);
+    getKeys(keys);
     for (std::size_t i=0; i<keys.size(); i++) {
-      s << getObject().getRef(keys[i]).toXML(keys[i], indent + 2);
+      s << get(keys[i]).toXML(keys[i], indent + 2);
     }
     s << lCloseT << tagName << ">"; 
   break;

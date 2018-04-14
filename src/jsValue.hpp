@@ -6,7 +6,6 @@
 #include <ostream>
 #include <sstream>
 
-#include "jsObject.hpp"
 #include "momo/binaryCoding.hpp"
 
 #define T_UNDEFINED -1
@@ -56,18 +55,19 @@ namespace momo {
 * or an index (for arrays). There are two different approaches, either the information
 * is retrieved directly as C++-variable:
 * @code
-*     jsValue myObject("{\"keyA\":17, \"keyB\":\"aText\"}"),
+*     jsValue myObject("{\"keyA\":17, \"keyB\":\"aText\",\"keyC\":{}}"),
 *             myArray("[17.3,\"anotherText\"]"); 
 *     int ia = myObject.getInt("keyA")
 *         db = myArray.getDouble(0); 
 *     String sa = myObject.getString("keyB"),
 *            sb = myArray.getString(1); 
+*     jsValue jsOa = myObject.getObject("keyC");
 * @endcode
 * or the information is first extracted as jsValue, from which the C++-variable is read:
 * @code
 *     ...
-*     jsValue jsa = myObject.get("keyA"),
-*              jsb = myArray.get(0),
+*     jsValue& jsa = myObject.getRef("keyA"),
+*              jsb = myArray.getRef(0),
 *             jssa = myObject.get("keyB")
 *     std::string sa = jssa.getString();
 *     int a = jsa.getInteger();
@@ -109,16 +109,18 @@ class jsValue {
   int type, precision;
 
   long intVal; 
-
   double dblVal; 
-
   std::string stringVal; // TODO: use string && stringVal and std::move()
-
   std::vector<jsValue> arrayVal;
-
-  jsObject objectVal;
+  std::map<std::string, jsValue> objectVal;
 
   void init();
+
+  // access with type-check, used by public getXYZ() functions:
+  int getInt() const;
+  double getDbl() const;
+  std::string getString() const;
+  std::vector<double> getDblArray() const;
 
   public:
 
@@ -148,33 +150,31 @@ class jsValue {
   jsValue(const std::vector<long> &);
 
   // SONSTIGE
+  int getType() const;
+  int getPrecision() const;
 
-
-  // SUPPORT WRITING
+  // ACCESSING ELEMENTS OF OBJECT/ARRAY-TYPE JSVALUE
+  bool has(std::string) const;
+  void getKeys(std::vector<std::string>& keys) const;
+  std::size_t size() const;
   jsValue& getRef(std::size_t index); 
   jsValue& getRef(std::string key);
-
-
-  // READING JSVALUE INTO C++ (OBJECT/ARRAY)
-  int getType() const;
-  bool has(std::string) const;
-  std::size_t size() const;
+  const jsValue get(const std::string& key) const; 
+  const jsValue get(std::size_t index) const;
   jsValue getObject(std::size_t index) const;
   jsValue getObject(std::string key) const;
   jsValue getArray(std::size_t index) const;
   jsValue getArray(std::string key) const;
 
-  std::string getString(std::string key) const;
-  std::string getString(std::size_t index) const;
-
-  int getInt(std::string key) const;
-  int getInt(std::size_t index) const;
-
-  double getDbl(std::string key) const;
-  double getDbl(std::size_t index) const;
-
-  std::vector<double> getDblArray(std::string key) const;
-  std::vector<double> getDblArray(std::size_t index) const;
+  // READING JSVALUE INTO C++ primitive types
+  std::string getString(std::size_t index) const { return get(index).getString();}
+  std::string getString(std::string key) const { return get(key).getString();}
+  int getInt(std::size_t index) const { return get(index).getInt();}
+  int getInt(std::string key) const { return get(key).getInt();}
+  double getDbl(std::size_t index) const { return get(index).getDbl();}
+  double getDbl(std::string key) const {return get(key).getDbl();}
+  std::vector<double> getDblArray(std::string key) const {return get(key).getDblArray();};
+  std::vector<double> getDblArray(std::size_t index) const {return get(index).getDblArray();};
 
   // WRITING C++ INTO JSVALUE
   void add(jsValue);              // add to array
@@ -188,15 +188,9 @@ class jsValue {
   friend std::ostream& operator<<(std::ostream& os, const jsValue& x);
 
   // TODO: delete / mov? 
-  std::vector<double> getDblArray() const;
-
   // I try to avoid these, but still use them e.g. in testV8js
   std::vector<jsValue> getArray() const;
-  int getInt() const;
-  double getDbl() const;
-  int getPrecision() const;
-  jsObject getObject() const;
-  std::string getString() const;
+//  jsObject getObject() const;
   std::string getEncodedString() const;
   std::vector<jsValue>& getArrayRef() ;
 
