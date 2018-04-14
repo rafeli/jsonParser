@@ -24,6 +24,7 @@ int TestJSON::testAll(){
 int TestJSON::testParse() {
 
   std::stringstream actual_;
+  int numTests = 0;
   momo::JSON json;
   momo::jsValue jsValue;
   std::string test_ = "parseString",
@@ -40,14 +41,17 @@ int TestJSON::testParse() {
     testString = "123456789";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.stringify(), testString, test_); 
+    numTests++;
 
     testString = "-11";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.stringify(), testString, test_); 
+    numTests++;
 
     testString = " -1 ";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.getInt(), -1, test_); 
+    numTests++;
 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s;
@@ -60,6 +64,7 @@ int TestJSON::testParse() {
     momo::TestTools::report(false, "didn't recognize as error: 1 1"); 
   } catch (std::string e) {
     momo::TestTools::report(e, "JSON::parse unexpected: 1", test_); 
+    numTests++;
   }
 
   // -2- doubles 
@@ -69,14 +74,17 @@ int TestJSON::testParse() {
     testString = "12.3456789";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.stringify(), "1.23456789e+01", test_); 
+    numTests++;
 
     testString = "-11E05";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.stringify(), "-1.1e+06", test_); 
+    numTests++;
 
     testString = " -0.0012E-002 ";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.stringify(), "-1.2e-05", test_); 
+    numTests++;
 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s;
@@ -228,5 +236,5 @@ int TestJSON::testParse() {
 //
 //  // ?? exit
 //  MYLOG(DEBUG,"EXIT");
-  return 13;
+  return numTests;
 }
