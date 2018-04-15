@@ -37,7 +37,7 @@ int TestJSON::testParse() {
   // -1- integer
   try {
 
-    test_ = "integer";
+    test_ = "JSON::parse(integer) ";
     testString = "123456789";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.stringify(), testString, test_); 
@@ -59,7 +59,7 @@ int TestJSON::testParse() {
 
   // -1a- incorrect integers
   try {
-    test_ = "incorrect integer";
+    test_ = "JSON::parse(incorrect integer) ";
     testString = "1 1";
     jsValue = json.parse(testString);
     momo::TestTools::report(false, "didn't recognize as error: 1 1"); 
@@ -71,7 +71,7 @@ int TestJSON::testParse() {
   // -2- doubles 
   try {
 
-    test_ = "double";
+    test_ = "JSON::parse(double) ";
     testString = "12.3456789";
     jsValue = json.parse(testString);
     momo::TestTools::report(jsValue.stringify(), "1.23456789e+01", test_); 
@@ -98,7 +98,7 @@ int TestJSON::testParse() {
 
   // -2a- incorrect doubles
   try {
-    test_ = "incorrect double";
+    test_ = "JSON::parse(incorrect double) ";
     testString = "A1";
     jsValue = json.parse(testString);
     momo::TestTools::report(false, "didn't recognize as error: A1"); 
@@ -128,47 +128,75 @@ int TestJSON::testParse() {
   // -3- string
   try {
 
-    test_ = "string";
-    testString = "\"12abc34\"";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.getString(), testString, test_); 
-    numTests++;
+    test_ = "JSON::parse(string) ";
+    testString = "12abc34";
+    momo::TestTools::report(json.parse("\""+testString+"\"").getString(), testString, test_); 
 
-    testString =     "\"12\tabc\\\"def\n34\"";
+    testString =  "ab@cd";
+    momo::TestTools::report(json.parse("\""+testString+"\"").getString(), testString, test_); 
+
+    testString =  "ab\\ncd";
+    momo::TestTools::report(json.parse("\""+testString+"\"").getString(), testString, test_); 
+
+    testString =  "ab\\\"cd";
+    momo::TestTools::report(json.parse("\""+testString+"\"").getString(), testString, test_); 
+
+    testString =  "ab\ncd";
+    momo::TestTools::report(json.parse("\""+testString+"\"").getString(), testString, test_); 
+
+    testString =     "12\tabc\\\"def\n34";
+    momo::TestTools::report(json.parse("\""+testString+"\"").getString(), testString, test_); 
+
+    numTests += 3;
+
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s;
+  }
+
+  // -3A- non-JSON string
+  try {
+    test_ = "string without double quotes";
+    testString = "abc";
     jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.getString(), testString, test_); 
+    momo::TestTools::report("not OK", "", "syntax error not recognized"); 
+  } catch (std::string e) {
+    momo::TestTools::report(e, "Error parsing number from: \"abc\" expecting digit, not: abc", test_); 
+  }
+
+  try {
+    test_ = "string without internal unescaped double quote";
+    testString = "ab\"cd";
+    jsValue = json.parse("\"" + testString + "\"");
+    momo::TestTools::report("not OK", "", "syntax error not recognized"); 
+  } catch (std::string e) {
+    momo::TestTools::report(e, "JSON::parse unexpected: cd\"", test_); 
+  }
+
+  // -4- array
+  try {
+
+    test_ = "JSON::parse(array) ";
+    testString = "[12, \"abcdef\", 1.078000e+00]";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(jsValue.stringify(), testString, test_); 
     numTests++;
 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s;
   }
 
-//  // -10 a simple array
-//  test_ = "parseArray";
-//  try {
-//    actual_.str("");
-//    expected_=  testString = "[12, \"abcdef\", 1.078000e+00]";
-//    driver.parse(testString);
-//    actual_ << driver.result; 
-//    momo::TestTools::report(actual_.str(), expected_, test_); 
-//  } catch (std::string s) {
-//    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
-//  }
-//
-//  // -11- a simple object
-//  test_ = "parseObject";
-//  try {
-//    actual_.str("");
-//    expected_= "12";
-//    testString = "{\"myInt\" : 12}";
-//    driver.parse(testString);
-//    momo::jsObject result = driver.result.getObject();
-//    actual_ << result.get("myInt")  ; 
-////    actual_ << result.get("myInt") << ", " << result.get("myArray") ; 
-//    momo::TestTools::report(actual_.str(), expected_, test_); 
-//  } catch (std::string s) {
-//    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
-//  }
+  // -11- a simple object
+  try {
+    test_ = "JSON::parse(Object) ";
+    testString = "{\"myInt\" : 12}";
+    jsValue = json.parse(testString);
+    momo::TestTools::report(jsValue.stringify(), testString, test_); 
+    momo::TestTools::report(jsValue.getInt("myInt"), 12, test_); 
+    numTests++;
+
+  } catch (std::string s) {
+    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
+  }
 //
 //  // -12- a simple object
 //  try {
@@ -181,17 +209,6 @@ int TestJSON::testParse() {
 //    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
 //  }
 //
-//  // -13- non-JSON string
-//  //     (havent invested much time in error messages from bison)
-//  try {
-//    actual_.str("");
-//    expected_= testString = "abc";
-//    driver.parse(testString);
-//    actual_ << driver.result; 
-//    momo::TestTools::report("not OK", "", "syntax error not recognized"); 
-//  } catch (std::string s) {
-//    momo::TestTools::report(s, "parsing JSON: syntax error, unexpected identifier", "no JSON: parse(\"abc\")"); 
-//  }
 //
 //  try {
 //    actual_.str("");

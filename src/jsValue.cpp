@@ -17,7 +17,7 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      os << std::scientific << x.getDbl();
      break;
    case T_STRING:
-     os << "\"" << x.getEncodedString() << "\"";
+     os << "\"" << x.getString() << "\"";
      break;
    case T_ARRAY:
      os << "[";
@@ -120,36 +120,27 @@ jsValue::jsValue(const double &v, int precision_) {
 * @brief constructs jsValue with type 'STRING'
 *
 * @param s: the string that is to be represented
-* @param encoded: for internal use in parser, should be left to default=false (even
-* though each string is stored encdoded)
+* *without* enclosing double-quotes, e.g. @code jsValue jsName("myName"); @endcode. Note that the
+* equivalent call to JSON.parse would require double-quotes, e.g. @code jsValue jsName = JSON.parse("\"myName\"");
+* @endcode
+* TODO: check and prevent that a string contains a non-escaped " as in jsValue("abc\"def") which is a 7-character
+*       string and invalid, wher the 8-character jsValue("abc\\\"def") would be valid
 */
-jsValue::jsValue(const std::string &s, bool encoded) {
+jsValue::jsValue(const std::string &s) {
    init();
    type = T_STRING;
    stringVal = s;
 
-  // decode value if it was encoded, this is currently (20171016)
-  // only if jsValue is called from json-parser. 
-  if (encoded) {
-    std::size_t pos;
-
-    pos =0;
-    while ((pos=stringVal.find("\\\"",pos)) != std::string::npos) {
-      stringVal = stringVal.replace(pos,2,"\"");
-      pos += 1;
+  std::size_t pos=0;
+  while ((pos=s.find("\"",pos)) != std::string::npos) {
+    if (pos==0 || s[pos-1] != '\\') {
+      throw std::string("from jsValue(string) constructor: string contains unescaped \" at pos:")
+      + std::to_string(pos);
     }
-// 20171016
-//    pos =0;
-//    while ((pos=stringVal.find("\\n",pos)) != std::string::npos) {
-//      stringVal = stringVal.replace(pos,2,"\n");
-//      pos += 1;
-//    }
-//    pos =0;
-//    while ((pos=stringVal.find("\\t",pos)) != std::string::npos) {
-//      stringVal = stringVal.replace(pos,2,"\t");
-//      pos += 1;
-//    }
+    pos++;
   }
+   
+
 
 // 20171016
 stringVal = momo::tools::b64toa(stringVal);
@@ -159,8 +150,9 @@ stringVal = momo::tools::b64toa(stringVal);
  
 /**
 * @brief constructs jsValue with type ARRAY
+*        with values copied from the provided argument
 *
-* @param v the vector of jsValues that is represented
+* @param v the vector of jsValues that is copied into jsValue
 */
 jsValue::jsValue(const std::vector<jsValue> &v) {
   init();
@@ -171,8 +163,9 @@ jsValue::jsValue(const std::vector<jsValue> &v) {
 
 /**
 * @brief constructs jsValue of ARRAY type directly from vector<String>
+*        with values copied from the provided argument
 *
-* @param v
+* @param v the vector of strings that is copied into jsValue
 */
 jsValue::jsValue(const std::vector<std::string> &v) {
   init();
@@ -186,8 +179,9 @@ jsValue::jsValue(const std::vector<std::string> &v) {
 
 /**
 * @brief constructs jsValue of ARRAY type directly from vector<double>
+*        with values copied from the provided argument
 *
-* @param v: vector<double> that is represented
+* @param v the vector of strings that is copied into jsValue
 * @param precision_: number of decimal places on stringifying the doubles
 */
 jsValue::jsValue(const std::vector<double> &v, int precision_) {
@@ -286,35 +280,7 @@ std::string  jsValue::getString() const {
   return momo::tools::atob64(stringVal);
 }
 
-std::string jsValue::getEncodedString() const {
 
-  // the counterpart to this encoding is in scanning {doubleQuotedString}
-  // as implemented in scanner.l 
-
-  std::string s = momo::tools::atob64(stringVal);
-  std::size_t pos;
-
-  if (type != T_STRING) throw_("requesting string from non-string jsonValue");
- 
-  pos =0;
-  while ((pos=s.find("\\",pos+1)) != std::string::npos) {
-    s = s.replace(pos,1,"\\\\");
-    pos += 2;
-  }
-  pos =0;
-  while ((pos=s.find("\"",pos+1)) != std::string::npos) {
-    s = s.replace(pos,1,"\\\"");
-    pos += 2;
-  }
-//  pos =0;
-//  while ((pos=s.find("\n",pos+1)) != std::string::npos) {
-//    s = s.replace(pos,1,"\\n");
-//    pos += 2;
-//  }
-  
-  return  s ;
-
-}
 
 // commented out april 2018: doesnt seem consistent to provide a copy
 // of the implementation. If anything, this should be called jsValue_to_stdVector 

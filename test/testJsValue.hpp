@@ -19,12 +19,6 @@ public:
 
   int testAll();
 
-  int testInt();
-
-  int testString();
-
-  int testDouble();
-
   int testArray();
 
   int testObject();

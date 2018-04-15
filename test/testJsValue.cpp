@@ -13,148 +13,18 @@ TestJsValue::TestJsValue(){
 TestJsValue::~TestJsValue(){}
 
 int TestJsValue::testAll(){
-  int numTests = 0;
 
-  numTests +=   testInt();
+  int numTests = 0;
 
   numTests +=   testArray();
 
   numTests +=   testObject();
-
-  numTests +=   testString();
 
   numTests += testConstructors();
 
   return numTests;
 }
 
-
-int TestJsValue::testString(){
-
-  std::string plain="ab@cd",              //  ab@cd
-          quote="ab\"cd",                 //  ein " quote
-          backSlash="ab\\ncd",            //  ein \ backSlash
-          escQuote="ab\\\"cd",            //  escaped \" quote
-          linebreak = "ab\ncd",           //  ab
-                                          //  cd
-
-          // corresponding JSON is strings enclosed in double-quotes
-          // *only* quotes and backslashes in string must be escaped
-          // \t and \n do not require any treatment
-          plainJSON = "\"ab@cd\"",       
-          quoteJSON = "\"" + escQuote + "\"", 
-          escQuoteJSON = "\"ab\\\\\\\"cd\"",
-          backSlashJSON = "\"ab\\\\ncd\"", 
-          linebreakJSON = "\"ab\ncd\"";
-
-
-  try{
-    std::stringstream actual_;
-    std::string test_ = "testString",
-                expected_ = "";
-    momo::jsValue jsPlain, jsQuote, jsEscQuote, jsBackSlash, jsLinebreak;
-
-    // -0- 
-    MYLOG(DEBUG, "ENTER");
-
-    // -1- test constructor, these should take strings (without outer double quotes)
-    //     getString should give original string, stringify() the corresponsing JSON
-    jsPlain = momo::jsValue(plain); jsQuote = momo::jsValue(quote); jsEscQuote = momo::jsValue(escQuote);
-    jsBackSlash = momo::jsValue(backSlash); jsLinebreak = momo::jsValue(linebreak);
-
-    momo::TestTools::report(jsPlain.getString(), plain, "jsValue(ab@cd).getString()");
-    momo::TestTools::report(jsQuote.getString(),  quote , "jsValue(ab\"cd).getString()");
-    momo::TestTools::report(jsBackSlash.getString(),  backSlash , "jsValue(ab\\cd).getString()");
-    momo::TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(ab\\\"cd).getString()");
-    momo::TestTools::report(jsLinebreak.getString(), linebreak, "jsValue(ab\\ncd).getString()");
-
-    momo::TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(ab@cd).stringify()");
-    momo::TestTools::report(jsQuote.stringify(),  quoteJSON , "jsValue(ab\"cd).stringify()");
-    momo::TestTools::report(jsBackSlash.stringify(), backSlashJSON , "jsValue(ab\\cd).stringify()");
-    momo::TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(ab\\\"cd).stringify()");
-    momo::TestTools::report(jsLinebreak.stringify(), linebreakJSON, "jsValue(ab\\ncd).stringify()");
-
-//    // -3- same with getJSONValue
-//    // TODO: move to testJSON::testParse
-//    jsPlain = momo::getJSONValue(plainJSON); jsQuote = momo::getJSONValue(quoteJSON); 
-//    jsEscQuote = momo::getJSONValue(escQuoteJSON); jsBackSlash = momo::getJSONValue(backSlashJSON);
-//    jsLinebreak = momo::getJSONValue(linebreakJSON);
-//
-//    momo::TestTools::report(jsPlain.getString(), plain, "jsValue(ab@cd).getString()");
-//    momo::TestTools::report(jsQuote.getString(),  quote , "jsValue(ab\"cd).getString()");
-//    momo::TestTools::report(jsBackSlash.getString(),  backSlash , "jsValue(ab\\cd).getString()");
-//    momo::TestTools::report(jsEscQuote.getString(), escQuote, "jsValue(ab\\\"cd).getString()");
-//    momo::TestTools::report(jsLinebreak.getString(), linebreak, "jsValue(ab\\ncd).getString()");
-//
-//    momo::TestTools::report(jsPlain.stringify(), plainJSON, "jsValue(ab@cd).stringify()");
-//    momo::TestTools::report(jsQuote.stringify(),  quoteJSON , "jsValue(ab\"cd).stringify()");
-//    momo::TestTools::report(jsBackSlash.stringify(), backSlashJSON , "jsValue(ab\\cd).stringify()");
-//    momo::TestTools::report(jsEscQuote.stringify(), escQuoteJSON, "jsValue(ab\\\"cd).stringify()");
-//    momo::TestTools::report(jsLinebreak.stringify(), linebreakJSON, "jsValue(ab\\ncd).stringify()");
-//
-
-
-
-//     // -4- tests on incorrect strings
-//     // TODO: check
-//     try {
-//       momo::getJSONValue("a\\b").getString();
-//       momo::TestTools::report(std::string("a\\b incorrect"), momo::getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
-//     } catch (std::string s) {
-//       momo::TestTools::report("a\\b no JSON", "a\\b no JSON", "getJSONValue(non-json)");
-//     }
-// 
-//     try {
-//       momo::getJSONValue("a\"b").getString();
-//       momo::TestTools::report(std::string("a\"b incorrect"), momo::getJSONValue("a\\b").getString(), "getJSONValue(non-json)");
-//     } catch (std::string s) {
-//       momo::TestTools::report("a\"b no JSON", "a\"b no JSON", "getJSONValue(non-json)");
-//     }
-// 
-//     try {
-//       momo::getJSONValue("a\\\\\"b").getString();
-//       momo::TestTools::report(std::string("a\\\\\"b incorrect"), momo::getJSONValue("a\\\\\"b").getString(), "getJSONValue(non-json)");
-//     } catch (std::string s) {
-//       momo::TestTools::report("a\\\\\"b no JSON", "a\\\\\"b no JSON", "getJSONValue(non-json)");
-//     }
-// 
-//     // ???
-//     MYLOG(DEBUG, "EXIT");
-   } catch(std::string s) {
-     momo::TestTools::report(false, "exception in testString: " + s);
-     std::cout << "Exception thrown in testString: " << s << std::endl;
-   }
-
-  return 20;
-}
-
-int TestJsValue::testInt(){
-
-  momo::jsValue intVal( 17),
-          stringVal("abcd");
-
-  try{
-    std::stringstream actual_;
-    std::string test_ = "testInt",
-                expected_ = "";
-    // -0- 
-    MYLOG(DEBUG, "ENTER");
-
-    // -1-   test  
-    actual_.str("");
-    expected_ = "\"abcd\"17";
-    actual_ <<  stringVal << intVal ;
-    momo::TestTools::report(actual_.str(), expected_, test_);
-
-    // ???
-    MYLOG(DEBUG, "EXIT");
-  } 
-  catch(char const *s) {
-    std::cout << "Exception thrown in testInt: " << s << std::endl;
-  }
-
-  return 1;
-}
 
 int TestJsValue::testArray(){
 
@@ -262,6 +132,8 @@ int TestJsValue::testObject(){
 
 int TestJsValue::testConstructors(){
 
+  std::string test, testString, testJSON;
+
   // -1- construct from int
   try {
     int a=17, b=-3, c=0;
@@ -278,17 +150,52 @@ int TestJsValue::testConstructors(){
 
   // -2- construct from string
   try {
-    std::string a="aa", b="C\"", c="";
-    momo::jsValue x(a), *y = new momo::jsValue(b), z = momo::jsValue(c);
 
+    //  constructor should strings (without outer double quotes)
+    //  getString should give original string, stringify() the corresponsing JSON
+    test = "jsValue::jsValue(string) ";
+    testString = "ab@cd";
+    testJSON = "\"" + testString + "\"";
+    momo::TestTools::report(momo::jsValue(testString).getString(), testString, test);
+    momo::TestTools::report(momo::jsValue(testString).stringify(), testJSON, test + "+ stringify ");
+
+    testString = "ab\\ncd";
+    testJSON = "\"" + testString + "\"";
+    momo::TestTools::report(momo::jsValue(testString).getString(), testString, test);
+    momo::TestTools::report(momo::jsValue(testString).stringify(), testJSON, test + "+ stringify() ");
+
+    testString = "ab\\\"cd";
+    testJSON = "\"" + testString + "\"";
+    momo::TestTools::report(momo::jsValue(testString).getString(), testString, test);
+    momo::TestTools::report(momo::jsValue(testString).stringify(), testJSON, test + "+ stringify() ");
+
+    testString = "ab\ncd";
+    testJSON = "\"" + testString + "\"";
+    momo::TestTools::report(momo::jsValue(testString).getString(), testString, test);
+    momo::TestTools::report(momo::jsValue(testString).stringify(), testJSON, test + "+ stringify() ");
+
+    // string with unescaped " should throw
+    try {
+      test = "string with unescaped double quote";
+      testString = "ab\"cd";
+      momo::TestTools::report(momo::jsValue(testString).getString(), "not recognized", test);
+    } catch (std::string e) {
+      momo::TestTools::report(e, "from jsValue(string) constructor: string contains unescaped \" at pos:2", test); 
+    }
+
+    // three different ways to use constructor:
+    std::string a="aa", b="C\\\"", c="";
+    momo::jsValue x(a), *y = new momo::jsValue(b), z = momo::jsValue(c);
     if (x.getString() == a && y->getString()==b && z.getString() == c) {
        momo::TestTools::report("ok", "ok" , "jsValue(string)");
     } else {
        momo::TestTools::report("Error:", "" , "jsValue(string)");
     }
+
   } catch (std::string e) {
     momo::TestTools::report(false , "Exception in jsValue(string): " + e);
   }
+
 
   // -3- construct from double
   try {
@@ -321,7 +228,7 @@ int TestJsValue::testConstructors(){
 
   // -5- construct from std::vector<string>
   try {
-    std::string a="aa", b="C\"", c="";
+    std::string a="aa", b="C\\\"", c="";
     std::vector<std::string> myVector = {a,b,c};
     momo::jsValue x(myVector), *y = new momo::jsValue(myVector), z = momo::jsValue(myVector);
 

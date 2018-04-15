@@ -125,7 +125,7 @@ class jsValue {
   jsValue(const long &);
   jsValue(const int &);
   jsValue(const double &, int precision = LOWPRECISION);
-  jsValue(const std::string &, bool encoded = false); // TODO: check uses ?
+  jsValue(const std::string &);
   jsValue(const std::vector<jsValue> &);
 // the following allowed e.g. jsValue x = y; with y a std::vector<jsValue>
 
