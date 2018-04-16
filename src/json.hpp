@@ -28,6 +28,8 @@ class json {
 
   jsValue parseExpectString(const std::string& s, std::size_t& pos);
 
+  jsValue parseExpectNull(const std::string& s, std::size_t& pos);
+
   jsValue parseExpectNumber(const std::string& s, std::size_t& pos);
 
   jsValue parseExpectBoolean(const std::string& s, std::size_t& pos);

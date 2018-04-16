@@ -16,7 +16,7 @@ jsValue json::parseExpectJSON(const std::string& s, std::size_t& pos) {
 
   case '{': return parseExpectJSObject(s,pos); break;
 
-  case '\"': // fallthrough intended
+  case '\"': // fallthrough intended (but singlequotes will be refused)
   case '\'': return parseExpectString(s,pos); break;
 
   case 'T':
@@ -24,7 +24,10 @@ jsValue json::parseExpectJSON(const std::string& s, std::size_t& pos) {
   case 'F':
   case 'f': return parseExpectBoolean(s,pos); break;
 
+  case 'n' : return parseExpectNull(s,pos); break;
+
   default: return parseExpectNumber(s,pos); break;
+
   }
 }
 
@@ -114,16 +117,13 @@ jsValue json::parseExpectJSObject(const std::string& s, std::size_t& pos) {
 /**
 * @brief parse the JSON of the form "..." and produce a string-type
 *        jsValue with string=... 
-* <br/> The momo::JSON module has no functionality to add or remove escaping
+* <br/> The momo::JSON module shouldnt and doenst have functionality to add or remove escaping
 * backslashes, but it checks and forbids unescaped doublequotes in string-values.
-* <br/> Note that the remark "a valid JSON-String" can have two completely different
-* meanings: (I) the string "{false}" is not valid JSON and (II) the string 'ab"cd'
-* may be a valid JS-String but the unescaped double-quote is problematic when
-* this string is the string-value in a JSON construct, e.g. as in ["ab"cd"]
-* <br/>In case a string contains double-quotes, these double-quotes should be escaped.
-* In both C++ and JS code the following "ab\"cd" is an unacceptable UN-escaped quote,
-* because the backslash is part of the C++ or JS-Code but not part of the string. Acceptable would 
-* be "ab\\\"cd"
+* TODO: also forbid unescaped backslashes and add a number of further escaped
+*       characters: backspace, formfeed, newline, ...
+* <br/> In both C++ and JS code the following "ab\"cd" is an unacceptable UN-escaped quote,
+* because the backslash is part of the C++ or JS-Code but not part of the string. 
+* Acceptable would be "ab\\\"cd"
 *
 * @param s
 * @param pos
@@ -211,6 +211,16 @@ jsValue json::parseExpectNumber(const std::string& s, std::size_t& pos) {
   } catch (std::string e) {
     throw "Error parsing number from: \"" + s.substr(posL,10) + "\" " + e;
   }
+}
+
+jsValue json::parseExpectNull(const std::string& s, std::size_t& pos) {
+
+  if (s.substr(pos,4)=="null") {
+    pos += 4;
+    return jsValue((char *)NULL); // this will choose the char* constructor
+  }
+
+  throw std::string("json::parse expected null, not: ") + s.substr(pos,10);
 }
 
 jsValue json::parseExpectBoolean(const std::string& s, std::size_t& pos) {

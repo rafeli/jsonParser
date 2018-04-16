@@ -19,6 +19,9 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
    case T_BOOL:
      os << (x.getBool() ? "true" : "false");
      break;
+   case T_NULL:
+     os << "null";
+     break;
    case T_STRING:
      os << "\"" << x.getString() << "\"";
      break;
@@ -139,7 +142,13 @@ jsValue::jsValue(const bool &v) {
 */
 jsValue::jsValue(const char* s) {
 
-  (*this) =  jsValue(std::string(s));
+  if (s==NULL) {
+    init();
+    type = T_NULL;
+  } else {
+    (*this) =  jsValue(std::string(s));
+  }
+
 
 }
 

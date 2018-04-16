@@ -15,6 +15,7 @@
 #define T_BOOL 3
 #define T_ARRAY 4
 #define T_OBJECT 5
+#define T_NULL 6
 
 #define FULLPRECISION 16
 #define LOWPRECISION 2
@@ -131,11 +132,9 @@ class jsValue {
   jsValue(const char* );
   jsValue(const std::string &);
   jsValue(const std::vector<jsValue> &);
+
 // the following allowed e.g. jsValue x = y; with y a std::vector<jsValue>
-
-
-
-// without we now need: jsValule x = jsValue(y); which is clearer to me
+// without we now need: jsValue x = jsValue(y); which is clearer to me
 //  jsValue(std::vector<jsValue> &&);
 
 

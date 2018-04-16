@@ -176,7 +176,7 @@ int TestJSON::testParse() {
   try {
 
     test_ = "json::parse(array) ";
-    testString = "[12, \"abcdef\", 1.078000e+00, true]";
+    testString = "[12, \"abcdef\", 1.078000e+00, true, null]";
     myJSValue = json.parse(testString);
     momo::TestTools::report(myJSValue.stringify(), testString, test_); 
     numTests++;
