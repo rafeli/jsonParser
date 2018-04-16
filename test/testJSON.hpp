@@ -3,7 +3,7 @@
 
 #include "momo/testTools.hpp"
 #include "momo/logging.hpp"
-#include "../src/JSON.hpp"
+#include "../src/json.hpp"
 
 class TestJSON {
 

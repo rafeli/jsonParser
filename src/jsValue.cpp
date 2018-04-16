@@ -121,7 +121,7 @@ jsValue::jsValue(const double &v, int precision_) {
 *
 * @param s: the string that is to be represented
 * *without* enclosing double-quotes, e.g. @code jsValue jsName("myName"); @endcode. Note that the
-* equivalent call to JSON.parse would require double-quotes, e.g. @code jsValue jsName = JSON.parse("\"myName\"");
+* equivalent call to json.parse would require double-quotes, e.g. @code jsValue jsName = JSON.parse("\"myName\"");
 * @endcode
 * TODO: check and prevent that a string contains a non-escaped " as in jsValue("abc\"def") which is a 7-character
 *       string and invalid, wher the 8-character jsValue("abc\\\"def") would be valid
