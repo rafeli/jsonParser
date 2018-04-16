@@ -12,8 +12,9 @@
 #define T_INT 0
 #define T_DOUBLE 1
 #define T_STRING 2
-#define T_ARRAY 3
-#define T_OBJECT 4
+#define T_BOOL 3
+#define T_ARRAY 4
+#define T_OBJECT 5
 
 #define FULLPRECISION 16
 #define LOWPRECISION 2
@@ -110,6 +111,7 @@ class jsValue {
 
   long intVal; 
   double dblVal; 
+  bool boolVal; 
   std::string stringVal; // TODO: use string && stringVal and std::move()
   std::vector<jsValue> arrayVal;
   std::map<std::string, jsValue> objectVal;
@@ -122,9 +124,11 @@ class jsValue {
 
   jsValue(); // default constructor gives an object-type value
 
+  jsValue(const bool &);
   jsValue(const long &);
   jsValue(const int &);
   jsValue(const double &, int precision = LOWPRECISION);
+  jsValue(const char* );
   jsValue(const std::string &);
   jsValue(const std::vector<jsValue> &);
 // the following allowed e.g. jsValue x = y; with y a std::vector<jsValue>
@@ -171,12 +175,15 @@ class jsValue {
   int getInt(std::string key) const { return get(key).getInt();}
   double getDbl(std::size_t index) const { return get(index).getDbl();}
   double getDbl(std::string key) const {return get(key).getDbl();}
+  bool getBool(std::size_t index) const { return get(index).getBool();}
+  bool getBool(std::string key) const {return get(key).getBool();}
   std::vector<double> getDblArray(std::string key) const {return get(key).getDblArray();};
   std::vector<double> getDblArray(std::size_t index) const {return get(index).getDblArray();};
 
   // CONVERTING JSVALUE primitive types INTO C++ primitive types
   int getInt() const;
   double getDbl() const;
+  bool getBool() const;
   std::string getString() const;
   std::vector<double> getDblArray() const;
 

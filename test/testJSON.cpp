@@ -176,7 +176,7 @@ int TestJSON::testParse() {
   try {
 
     test_ = "json::parse(array) ";
-    testString = "[12, \"abcdef\", 1.078000e+00]";
+    testString = "[12, \"abcdef\", 1.078000e+00, true]";
     myJSValue = json.parse(testString);
     momo::TestTools::report(myJSValue.stringify(), testString, test_); 
     numTests++;
@@ -212,16 +212,17 @@ int TestJSON::testParse() {
     momo::TestTools::report(myJSValue.getInt("myInt"), 12, test_); 
 
     // two key-value-pairs
-    testString = "{\"myArray\":[12, \"abc\"], \"myInt\":12}";
+    testString = "{\"myArray\":[12, \"abc\"], \"myBool\":false, \"myInt\":12}";
     momo::TestTools::report(json.parse(testString).stringify(), testString, test_); 
 
     // two key-value-pairs with non-standard spaces (cannot test by stringify)
-    testString = "{ \"myArray\": [12, \"abc\"],\"myInt\" :17}";
+    testString = "{ \"myArray\": [12, \"abc\"],\"myInt\" :17, \"myBool\" : false}";
     momo::jsValue myJSArray = json.parse(testString).getArray("myArray");
     momo::TestTools::report(myJSArray.size(), 2, test_); 
     momo::TestTools::report(myJSArray.getInt(0), 12, test_); 
     momo::TestTools::report(myJSArray.getString(1), "abc", test_); 
     momo::TestTools::report(json.parse(testString).getInt("myInt"), 17, test_); 
+    momo::TestTools::report(json.parse(testString).getBool("myBool"), false, test_); 
 
     numTests += 4;
 

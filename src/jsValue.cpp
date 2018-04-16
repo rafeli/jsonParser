@@ -16,6 +16,9 @@ std::ostream& operator<<(std::ostream& os, const jsValue& x) {
      os.precision(x.getPrecision());
      os << std::scientific << x.getDbl();
      break;
+   case T_BOOL:
+     os << (x.getBool() ? "true" : "false");
+     break;
    case T_STRING:
      os << "\"" << x.getString() << "\"";
      break;
@@ -117,6 +120,30 @@ jsValue::jsValue(const double &v, int precision_) {
 }
 
 /**
+* @brief constructs jsValue with type 'BOOLEAN'
+*
+* @param v
+*/
+jsValue::jsValue(const bool &v) {
+  init();
+  type = T_BOOL;
+  boolVal = v;
+}
+
+/**
+* @brief need this to prevent jsValue("someString") chooses the
+* jsValue(bool) constructor.
+*
+* see https://stackoverflow.com/questions/14770252/string-literal-matches-bool-overload-instead-of-stdstring
+*
+*/
+jsValue::jsValue(const char* s) {
+
+  (*this) =  jsValue(std::string(s));
+
+}
+
+/**
 * @brief constructs jsValue with type 'STRING'
 *
 * @param s: the string that is to be represented
@@ -142,7 +169,7 @@ jsValue::jsValue(const std::string &s) {
    
 
 
-// 20171016
+// 20171016  (2018: may no longer be necessary to store all stringvalues encoded. )
 stringVal = momo::tools::b64toa(stringVal);
 // end 20171016
 
@@ -232,9 +259,10 @@ jsValue::jsValue(const std::vector<long> &v) {
 *  #define T_UNDEFINED -1
 *  #define T_INT 0
 *  #define T_DOUBLE 1
-*  #define T_STRING 2
-*  #define T_ARRAY 3
-*  #define T_OBJECT 4
+*  #define T_BOOL 2
+*  #define T_STRING 3
+*  #define T_ARRAY 4
+*  #define T_OBJECT 5
 *  TODO: define these as enum
 * @return 
 */
@@ -252,6 +280,18 @@ int jsValue::getType() const {
 int jsValue::getInt() const {
   if (type != T_INT) throw_( "requesting int from non-int jsonValue");
   return (intVal);
+}
+
+/**
+* @brief check this is a BOOL-type jsValue and return its value
+* 
+* Note: recommended alternative to object.get(key).getBool() is object.getBool(key) 
+*
+* @return 
+*/
+bool jsValue::getBool() const {
+  if (type != T_BOOL) throw_( "requesting bool from non-bool jsonValue");
+  return (boolVal);
 }
 
 /**

@@ -214,7 +214,18 @@ jsValue json::parseExpectNumber(const std::string& s, std::size_t& pos) {
 }
 
 jsValue json::parseExpectBoolean(const std::string& s, std::size_t& pos) {
-  throw std::string("not implemented yet");
+
+  if (s.substr(pos,4)=="true" || s.substr(pos,4) == "TRUE") {
+    pos += 4;
+    return jsValue(true);
+  }
+
+  if (s.substr(pos,5)=="false" || s.substr(pos,5) == "FALSE") {
+    pos += 5;
+    return jsValue(false);
+  }
+
+  throw std::string("json::parse expected true or false, not: ") + s.substr(pos,10);
 }
 
 jsValue json::parse(const std::string& s) {
