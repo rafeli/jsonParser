@@ -26,7 +26,7 @@ int TestJSON::testParse() {
   std::stringstream actual_;
   int numTests = 0;
   momo::JSON json;
-  momo::jsValue jsValue;
+  momo::jsValue myJSValue;
   std::string test_ = "parseString",
           expected_ = "",
            testString;
@@ -39,18 +39,18 @@ int TestJSON::testParse() {
 
     test_ = "JSON::parse(integer) ";
     testString = "123456789";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.stringify(), testString, test_); 
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.stringify(), testString, test_); 
     numTests++;
 
     testString = "-11";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.stringify(), testString, test_); 
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.stringify(), testString, test_); 
     numTests++;
 
     testString = " -1 ";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.getInt(), -1, test_); 
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.getInt(), -1, test_); 
     numTests++;
 
   } catch (std::string s) {
@@ -61,7 +61,7 @@ int TestJSON::testParse() {
   try {
     test_ = "JSON::parse(incorrect integer) ";
     testString = "1 1";
-    jsValue = json.parse(testString);
+    myJSValue = json.parse(testString);
     momo::TestTools::report(false, "didn't recognize as error: 1 1"); 
   } catch (std::string e) {
     momo::TestTools::report(e, "JSON::parse unexpected: 1", test_); 
@@ -73,23 +73,23 @@ int TestJSON::testParse() {
 
     test_ = "JSON::parse(double) ";
     testString = "12.3456789";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.stringify(), "1.23456789e+01", test_); 
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.stringify(), "1.23456789e+01", test_); 
     numTests++;
 
     testString = "-11E05";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.stringify(), "-1.1e+06", test_); 
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.stringify(), "-1.1e+06", test_); 
     numTests++;
 
     testString = " -0.0012E-002 ";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.stringify(), "-1.2e-05", test_); 
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.stringify(), "-1.2e-05", test_); 
     numTests++;
 
     testString = "-6.022300e+23";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.stringify(), "-6.022300e+23", test_); 
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.stringify(), "-6.022300e+23", test_); 
     numTests++;
 
   } catch (std::string s) {
@@ -100,7 +100,7 @@ int TestJSON::testParse() {
   try {
     test_ = "JSON::parse(incorrect double) ";
     testString = "A1";
-    jsValue = json.parse(testString);
+    myJSValue = json.parse(testString);
     momo::TestTools::report(false, "didn't recognize as error: A1"); 
   } catch (std::string e) {
     momo::TestTools::report(e, "Error parsing number from: \"A1\" expecting digit, not: A1", test_); 
@@ -109,7 +109,7 @@ int TestJSON::testParse() {
 
   try {
     testString = "1.A1";
-    jsValue = json.parse(testString);
+    myJSValue = json.parse(testString);
     momo::TestTools::report(false, "didn't recognize as error: A1"); 
   } catch (std::string e) {
     momo::TestTools::report(e, "Error parsing number from: \"1.A1\" expecting digit, not: A1", test_); 
@@ -118,7 +118,7 @@ int TestJSON::testParse() {
 
   try {
     testString = "1.2E";
-    jsValue = json.parse(testString);
+    myJSValue = json.parse(testString);
     momo::TestTools::report(false, "didn't recognize as error: A1"); 
   } catch (std::string e) {
     momo::TestTools::report(e, "Error parsing number from: \"1.2E\" expecting digit, not: ", test_); 
@@ -157,7 +157,7 @@ int TestJSON::testParse() {
   try {
     test_ = "string without double quotes";
     testString = "abc";
-    jsValue = json.parse(testString);
+    myJSValue = json.parse(testString);
     momo::TestTools::report("not OK", "", "syntax error not recognized"); 
   } catch (std::string e) {
     momo::TestTools::report(e, "Error parsing number from: \"abc\" expecting digit, not: abc", test_); 
@@ -166,7 +166,7 @@ int TestJSON::testParse() {
   try {
     test_ = "string without internal unescaped double quote";
     testString = "ab\"cd";
-    jsValue = json.parse("\"" + testString + "\"");
+    myJSValue = json.parse("\"" + testString + "\"");
     momo::TestTools::report("not OK", "", "syntax error not recognized"); 
   } catch (std::string e) {
     momo::TestTools::report(e, "JSON::parse unexpected: cd\"", test_); 
@@ -177,37 +177,48 @@ int TestJSON::testParse() {
 
     test_ = "JSON::parse(array) ";
     testString = "[12, \"abcdef\", 1.078000e+00]";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.stringify(), testString, test_); 
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.stringify(), testString, test_); 
     numTests++;
 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s;
   }
 
-  // -11- a simple object
+  // -4a- an incorrect array
+
+  // -5- a simple object
   try {
+
     test_ = "JSON::parse(Object) ";
-    testString = "{\"myInt\" : 12}";
-    jsValue = json.parse(testString);
-    momo::TestTools::report(jsValue.stringify(), testString, test_); 
-    momo::TestTools::report(jsValue.getInt("myInt"), 12, test_); 
-    numTests++;
+
+    // one key-value-pair
+    testString = "{\"myInt\":12}";
+    momo::TestTools::report(json.parse(testString).stringify(), testString, test_); 
+
+    // one key-value-pair with non-standard spaces (cannot test by stringify)
+    testString = "{ \"myInt\" : 12}";
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(myJSValue.getInt("myInt"), 12, test_); 
+
+    // two key-value-pairs
+    testString = "{\"myArray\":[12, \"abc\"], \"myInt\":12}";
+    momo::TestTools::report(json.parse(testString).stringify(), testString, test_); 
+
+    // two key-value-pairs with non-standard spaces (cannot test by stringify)
+    testString = "{ \"myArray\": [12, \"abc\"],\"myInt\" :17}";
+    momo::jsValue myJSArray = json.parse(testString).getArray("myArray");
+    momo::TestTools::report(myJSArray.size(), 2, test_); 
+    momo::TestTools::report(myJSArray.getInt(0), 12, test_); 
+    momo::TestTools::report(myJSArray.getString(1), "abc", test_); 
+    momo::TestTools::report(json.parse(testString).getInt("myInt"), 17, test_); 
+
+    numTests += 4;
 
   } catch (std::string s) {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
-//
-//  // -12- a simple object
-//  try {
-//    actual_.str("");
-//    expected_= testString = "{\"myArray\":[12, \"abc\"], \"myInt\":12}";
-//    driver.parse(testString);
-//    actual_ << driver.result.getObject();
-//    momo::TestTools::report(actual_.str(), expected_, test_); 
-//  } catch (std::string s) {
-//    std::cout << "ERROR in " << test_ <<": " << s << std::endl;
-//  }
+
 //
 //
 //  try {
