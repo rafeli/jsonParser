@@ -186,6 +186,16 @@ int TestJSON::testParse() {
   }
 
   // -4a- an incorrect array
+  try {
+    test_ = "JSON::parse(incorrect array) ";
+    testString = "[-xyz, nan]";
+    myJSValue = json.parse(testString);
+    momo::TestTools::report(false, "didn't recognize as error: [-xyz, nan]"); 
+  } catch (std::string e) {
+    momo::TestTools::report(e, "JSON::parseExpectJSArray: \"[-xyz, nan\" "
+      "Error parsing number from: \"-xyz, nan]\" expecting digit, not: xyz", test_); 
+    numTests++;
+  }
 
   // -5- a simple object
   try {
@@ -219,19 +229,5 @@ int TestJSON::testParse() {
     std::cout << "ERROR in " << test_ <<": " << s << std::endl;
   }
 
-//
-//
-//  try {
-//    actual_.str("");
-//    expected_= testString = "[-xyz, nan]";
-//    driver.parse(testString);
-//    actual_ << driver.result; 
-//    momo::TestTools::report("not OK", "", "syntax error not recognized"); 
-//  } catch (std::string s) {
-//    momo::TestTools::report(s, "parsing JSON: syntax error, unexpected identifier, expecting NUMBER_I or NUMBER_F", "no JSON: parse([-xyz])"); 
-//  }
-//
-//  // ?? exit
-//  MYLOG(DEBUG,"EXIT");
   return numTests;
 }
