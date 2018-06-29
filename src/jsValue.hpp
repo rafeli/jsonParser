@@ -25,7 +25,9 @@ namespace momo {
 /**
 * @brief Represents a javascript value, which can be an
 * object, array, number (double/int) or text (string). Typical use e.g
-* in an http-service that receives and responds JSON-strings:
+* in an http-service that receives and responds JSON-strings. The jsValue class has no
+* functionality to parse JSON: this is implemented in json.parse() for this.
+* 
 * @code
 * std::string service(std::string requestBody) {
 *   try {
