@@ -496,6 +496,17 @@ void jsValue::add(std::string key, jsValue val) {
 //  objectVal.add(key_, value_);
 }
 
+/**
+* @brief remove a key/value pair from an object
+*
+* @param key
+*/
+void jsValue::remove(std::string key) {
+  if (type != T_OBJECT) throw_("cannot remove key/value pair from non-object jsonValue");
+  if (!has(key)) throw std::string("trying to remove non-existing key-value");
+  objectVal.erase(key);
+}
+
 void jsValue::set(std::string key, jsValue val) {
   if (type != T_OBJECT) throw_("setting keyValuePair in non-object jsonValue");
   if (has(key)) {

@@ -191,6 +191,7 @@ class jsValue {
   // WRITING C++ INTO JSVALUE
   void add(jsValue);              // add to array
   void add(std::string, jsValue); // add key/value to object
+  void remove(std::string);       // delete key/value from object
   void set(std::string, jsValue); // set key/value in object, add if non-existent
   void set(std::size_t, jsValue); // set one value of a jsValue representing an array
 
