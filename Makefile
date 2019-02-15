@@ -26,5 +26,4 @@ src/%.o: src/%.cpp src/%.hpp
 
 
 clean:
-	cd src; rm -f *.o;  rm -f *.tab.* *.swp stack.hh location.hh position.hh scanner.cpp;
-	cd test; rm -f *.o;
+	rm -f src/*.o test*.o; 
