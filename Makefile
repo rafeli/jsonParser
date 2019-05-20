@@ -16,7 +16,7 @@ install : $(OBJS)
 	ar rvs ~/local/lib/libjson.a $(OBJS)
 
 test/testRunner : install $(OBJS) $(TESTOBJS)
-	$(CC) $(LFLAGS) -o test/testRunner $(TESTOBJS) -lmomoLogging -ljson -lmomoHTTP
+	$(CC) $(LFLAGS) -o test/testRunner $(TESTOBJS) -lmomoLogging -ljson -lmomoTools
 
 test/%.o: test/%.cpp test/%.hpp
 	$(CC) -o $@ -c $(INCLUDES) $(CFLAGS) $<
